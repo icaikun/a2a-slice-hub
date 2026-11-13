@@ -1,32 +1,66 @@
 # A2A Slice Hub (v0.1.0)
 
-A small, inspectable Python coordinator for slice-owned development, immutable Git
-candidates, independent QA, and IM mirroring. MIT licensed; Python 3.11+ and Git.
+> **Multi-agent parallel slice development coordinator** — vertical slice ownership (`slices/*.yaml`), SQLite WAL dual-state orchestration, 3-stage Git atomic CAS gatekeeper, independent snapshot-bound QA closed loop, and Feishu / DingTalk collaboration mirroring.  
+> MIT Licensed · Python 3.11+ · Real Git Worktrees & CAS · 447 Automated Adversarial Tests
+
+[**System Architecture**](#architecture-overview) · [**Lifecycle & Sequence**](#dual-state-lifecycle--collaboration-flow) · [**Module Map**](#source-module-map) · [**Quickstart**](#local-development) · [**Protocol Matrix**](#a2a-json-rpc-protocol-reference) · [**Security Boundaries**](SECURITY.md) · [**State Machine**](docs/state_transitions.md) · [**中文总体架构蓝图**](docs/architecture_blueprint.md)
+
+---
 
 **v0.1.0: a complete, inspectable open-source reference coordinator**, hardened
-across five adversarial engineering rounds. Complete refers to the bounded reference
-workflow below, not a turnkey production platform or full A2A conformance.
-Historical evidence: [Round 1](docs/round1_report.md), [Round 2](docs/round2_report.md),
-[Round 3](docs/round3_report.md), [Round 4](docs/round4_report.md),
-[Round 5](docs/round5_report.md). Current authority:
-[security boundaries](SECURITY.md), [state machine](docs/state_transitions.md),
-[architecture blueprint](docs/architecture_blueprint.md).
+across five adversarial engineering rounds ([Round 1](docs/round1_report.md) ·
+[Round 2](docs/round2_report.md) · [Round 3](docs/round3_report.md) ·
+[Round 4](docs/round4_report.md) · [Round 5](docs/round5_report.md)). Complete
+refers to the bounded reference workflow below, not a turnkey production platform
+or full A2A conformance.
 
 ## Architecture overview
 
-```text
-Authenticated REST / A2A JSON-RPC / signed IM callbacks
-                       |                         |
-             Store + Workflow + Approvals -- inbox receipts
-                       |                         |
-          SQLite WAL v4 (single host) ---- transactional outbox -> IM adapters
-                       |
-       Gatekeeper: paths/contracts -> trusted tests -> semantic review
-                       |
-           durable merge_intents -> Git ref CAS (single publisher)
-                       |
-              MERGED_PENDING_QA -> independent QA -> ACCEPTED / CLOSED
+<p align="center">
+  <img src="docs/assets/architecture.svg" alt="A2A Slice Hub System Architecture" width="100%"/>
+</p>
+
+### Dual-state lifecycle & collaboration flow
+
+<p align="center">
+  <img src="docs/assets/lifecycle.svg" alt="A2A Slice Hub Dual-State Lifecycle Pipeline" width="100%"/>
+</p>
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant IM as "飞书/钉钉群 (固定3Bot+人类)"
+    participant Hub as "Hub 中枢 (SQLite WAL v4)"
+    participant DevB as "Slice Worker B (payments)"
+    participant DevA as "Slice Worker A (orders)"
+    participant GK as "3-Stage Gatekeeper (Git CAS)"
+    participant QA as "Independent QA (锁定快照)"
+
+    IM->>Hub: 签名审批 L0 契约骨架卡片 (action=l0, skeleton_sha)
+    Hub->>DevB: A2A 领单创建 Attempt #1 (lease_epoch=1, READY -> ACTIVE)
+    DevB->>Hub: input-required 附 dependency-request/v1 (秒级释放本地执行槽)
+    Hub->>DevA: 商图 DAG 防环通过 -> 自动路由/复用 CONTRACT_PATCH 工单
+    DevA->>GK: 提交契约增量 + 实现 + 切片单测 (base_sha, source_sha)
+    GK->>GK: Gate 1 路径与可满足契约 -> Gate 2 可信基线 pytest -> Gate 3 AST 语义审
+    GK->>Hub: 写 merge_intents(PREPARED) -> git update-ref 原子合入 -> MERGED_PENDING_QA
+    Hub->>QA: 派发独立验收 (锁死精确 integration_sha)
+    QA->>Hub: qa-verdict/v1 (PASS) -> 晋升 ACCEPTED 并唤醒下游
+    Hub->>DevB: 下发最新 integration_sha 唤醒为 READY (新建 Attempt #2 继续开发)
+    DevB->>GK: 提交 payments 候选代码并通过三关原子合入 -> MERGED_PENDING_QA
+    QA->>Hub: 若检出缺陷则回传 bug-report/v1 可执行复现包 -> 打回 REWORK (满 3 轮熔断)
+    Hub->>IM: Transactional Outbox 播报协同摘要 / 争议满 2 模块×2 人类时发签名裁决卡
 ```
+
+### Source module map
+
+| Plane | Module | Core Responsibility |
+|---|---|---|
+| **Ingress & Schemas** | `src/a2a_slice_hub/api.py`<br/>`src/a2a_slice_hub/models.py` | 6-role Bearer auth, Hub REST (`/hub/*`), bounded A2A 0.3 JSON-RPC (`/a2a`), Feishu/DingTalk webhook ingress |
+| **Coordinator Core** | `src/a2a_slice_hub/store.py`<br/>`src/a2a_slice_hub/workflow.py` | SQLite WAL v4 (`BEGIN IMMEDIATE`), `work_items` × `attempts` CAS, quotient-graph DAG, dependency routing, Outbox aging & DLQ |
+| **Slice & Governance** | `src/a2a_slice_hub/slices.py`<br/>`src/a2a_slice_hub/approvals.py` | Protected `slices/*.yaml` ownership registry, contract provider lookup, version/digest-bound HMAC approval cards (`l0`, `breaking_contract`, `resume`) |
+| **3-Stage Gatekeeper** | `src/a2a_slice_hub/gatekeeper.py`<br/>`src/a2a_slice_hub/paths.py`<br/>`src/a2a_slice_hub/runner.py`<br/>`src/a2a_slice_hub/review.py` | Slice path & file-mode fence, Positive Habitable JSON Schema evolution check, baseline-owned exact-`nodeid` pytest runner, AST caller extraction & semantic review |
+| **Git & Execution** | `src/a2a_slice_hub/git.py`<br/>`src/a2a_slice_hub/worker.py`<br/>`src/a2a_slice_hub/experience.py` | Detached Git worktrees, immutable merge commits, `git update-ref` atomic CAS, lease-renewing worker slot, opt-in redacted `EverOSHook` |
+| **IM Mirroring** | `src/a2a_slice_hub/im.py`<br/>`src/a2a_slice_hub/config.py` | 3-bot `FeishuAdapter`, `DingTalkAdapter` (Webhook & OpenAPI), signature verifiers, `OutboxDispatcher`, YAML app factory |
 
 ## What is implemented
 

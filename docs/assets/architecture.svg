@@ -1,0 +1,291 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 942" width="1360" height="942" role="img" aria-label="A2A Slice Hub System Architecture">
+
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090F1D"/>
+      <stop offset="55%" stop-color="#0D1628"/>
+      <stop offset="100%" stop-color="#0A1220"/>
+    </linearGradient>
+    <linearGradient id="coreGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#111C33"/>
+      <stop offset="100%" stop-color="#0F1A2E"/>
+    </linearGradient>
+    <linearGradient id="gateGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#132226"/>
+      <stop offset="100%" stop-color="#0E1D24"/>
+    </linearGradient>
+    <pattern id="dotGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#64748B" opacity="0.16"/>
+    </pattern>
+    <filter id="cardShadow" x="-4%" y="-4%" width="108%" height="112%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#020617" flood-opacity="0.45"/>
+    </filter>
+    <marker id="arrowSlate" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#38BDF8"/>
+    </marker>
+    <marker id="arrowViolet" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#A78BFA"/>
+    </marker>
+    <marker id="arrowTeal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#2DD4BF"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#FBBF24"/>
+    </marker>
+    <marker id="arrowEmerald" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#34D399"/>
+    </marker>
+    <marker id="arrowRose" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#FB7185"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1360" height="942" rx="20" fill="url(#bgGrad)" stroke="#1E293B" stroke-width="2"/>
+  <rect x="0" y="0" width="1360" height="942" rx="20" fill="url(#dotGrid)"/>
+  <text x="36" y="46" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="22" font-weight="800" fill="#F8FAFC" text-anchor="start">A2A Slice Hub — System Architecture</text>
+  <text x="36" y="70" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="13" font-weight="500" fill="#94A3B8" text-anchor="start">垂直业务切片并行开发 · SQLite WAL 双层状态机 · 三关 Git 原子门禁 · 独立 QA 验收闭环</text>
+  <rect x="828" y="30" width="126" height="28" rx="14.0" fill="#0C2A3E" stroke="#0284C7" stroke-width="1.0"/>
+  <text x="891.0" y="48.14" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.5" font-weight="600" fill="#38BDF8" text-anchor="middle">SQLite WAL v4</text>
+  <rect x="964" y="30" width="132" height="28" rx="14.0" fill="#0A2E26" stroke="#059669" stroke-width="1.0"/>
+  <text x="1030.0" y="48.14" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.5" font-weight="600" fill="#34D399" text-anchor="middle">Git Atomic CAS</text>
+  <rect x="1106" y="30" width="120" height="28" rx="14.0" fill="#23183E" stroke="#7C3AED" stroke-width="1.0"/>
+  <text x="1166.0" y="48.14" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.5" font-weight="600" fill="#C4B5FD" text-anchor="middle">A2A 0.3 RPC</text>
+  <rect x="1236" y="30" width="88" height="28" rx="14.0" fill="#31230B" stroke="#D97706" stroke-width="1.0"/>
+  <text x="1280.0" y="48.14" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.5" font-weight="600" fill="#FBBF24" text-anchor="middle">447 Tests</text>
+  <rect x="36" y="92" width="628" height="144" rx="14" fill="#0E1A2F" stroke="#0284C7" stroke-width="1.4" filter="url(#cardShadow)"/>
+  <rect x="52" y="106" width="24" height="24" rx="6" fill="#38BDF8" stroke="none" stroke-width="0"/>
+  <text x="64" y="122.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.5" font-weight="800" fill="#0B1120" text-anchor="middle">1</text>
+  <text x="86" y="122.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="14.2" font-weight="700" fill="#F8FAFC" text-anchor="start">IM Collaboration &amp; Governance · 群聊协同与人工裁决</text>
+  <text x="648" y="122" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.5" font-weight="500" fill="#94A3B8" text-anchor="end">im.py · approvals.py</text>
+  <rect x="52" y="140" width="194" height="82" rx="10" fill="#0A1324" stroke="#1E3A5F" stroke-width="1.2"/>
+  <line x1="53" y1="150" x2="53" y2="212" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+  <text x="66" y="162" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">固定三机器人镜像</text>
+  <circle cx="67" cy="178" r="2.2" fill="#38BDF8"/>
+  <text x="75" y="182" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">总包 / 研发播报 / QA 机器人</text>
+  <circle cx="67" cy="197.5" r="2.2" fill="#38BDF8"/>
+  <text x="75" y="201.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">[slice · owner] 逻辑身份头</text>
+  <rect x="256" y="140" width="196" height="82" rx="10" fill="#0A1324" stroke="#1E3A5F" stroke-width="1.2"/>
+  <line x1="257" y1="150" x2="257" y2="212" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+  <text x="270" y="162" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">HMAC 签名审批卡</text>
+  <circle cx="271" cy="178" r="2.2" fill="#38BDF8"/>
+  <text x="279" y="182" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">l0 / breaking / resume</text>
+  <circle cx="271" cy="197.5" r="2.2" fill="#38BDF8"/>
+  <text x="279" y="201.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">绑精确版本与 diff 摘要</text>
+  <rect x="462" y="140" width="186" height="82" rx="10" fill="#0A1324" stroke="#1E3A5F" stroke-width="1.2"/>
+  <line x1="463" y1="150" x2="463" y2="212" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+  <text x="476" y="162" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">回调验签与防回声</text>
+  <circle cx="477" cy="178" r="2.2" fill="#38BDF8"/>
+  <text x="485" y="182" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">飞书原字节 SHA-256 验签</text>
+  <circle cx="477" cy="197.5" r="2.2" fill="#38BDF8"/>
+  <text x="485" y="201.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">钉钉网关鉴权 + 滤 app 回声</text>
+  <rect x="696" y="92" width="628" height="144" rx="14" fill="#14162E" stroke="#7C3AED" stroke-width="1.4" filter="url(#cardShadow)"/>
+  <rect x="712" y="106" width="24" height="24" rx="6" fill="#A78BFA" stroke="none" stroke-width="0"/>
+  <text x="724" y="122.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.5" font-weight="800" fill="#0B1120" text-anchor="middle">2</text>
+  <text x="746" y="122.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="14.2" font-weight="700" fill="#F8FAFC" text-anchor="start">Authenticated API &amp; A2A Ingress · 多角色鉴权入口</text>
+  <text x="1308" y="122" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.5" font-weight="500" fill="#94A3B8" text-anchor="end">api.py · models.py</text>
+  <rect x="712" y="140" width="196" height="82" rx="10" fill="#0D0F22" stroke="#3B2A6E" stroke-width="1.2"/>
+  <line x1="713" y1="150" x2="713" y2="212" stroke="#A78BFA" stroke-width="3" stroke-linecap="round"/>
+  <text x="726" y="162" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">6 类服务端角色凭据</text>
+  <circle cx="727" cy="178" r="2.2" fill="#A78BFA"/>
+  <text x="735" y="182" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">协调 / 研发 / 门禁 / QA</text>
+  <circle cx="727" cy="197.5" r="2.2" fill="#A78BFA"/>
+  <text x="735" y="201.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">审批人 / IM 网关分权隔离</text>
+  <rect x="918" y="140" width="204" height="82" rx="10" fill="#0D0F22" stroke="#3B2A6E" stroke-width="1.2"/>
+  <line x1="919" y1="150" x2="919" y2="212" stroke="#A78BFA" stroke-width="3" stroke-linecap="round"/>
+  <text x="932" y="162" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">A2A 0.3 子集 (/a2a)</text>
+  <circle cx="933" cy="178" r="2.2" fill="#A78BFA"/>
+  <text x="941" y="182" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">send / get / cancel 三方法</text>
+  <circle cx="933" cy="197.5" r="2.2" fill="#A78BFA"/>
+  <text x="941" y="201.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">6 类 v1 Data Part 严格校验</text>
+  <rect x="1132" y="140" width="176" height="82" rx="10" fill="#0D0F22" stroke="#3B2A6E" stroke-width="1.2"/>
+  <line x1="1133" y1="150" x2="1133" y2="212" stroke="#A78BFA" stroke-width="3" stroke-linecap="round"/>
+  <text x="1146" y="162" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">Hub REST (/hub/*)</text>
+  <circle cx="1147" cy="178" r="2.2" fill="#A78BFA"/>
+  <text x="1155" y="182" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">Epics · Items · Merge</text>
+  <circle cx="1147" cy="197.5" r="2.2" fill="#A78BFA"/>
+  <text x="1155" y="201.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">QA · Approvals · DLQ</text>
+  <polyline points="88,285 88,241" fill="none" stroke="#38BDF8" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowCyan)"/>
+  <rect x="102" y="251" width="182" height="22" rx="11.0" fill="#0C2A3E" stroke="#0369A1" stroke-width="1.0"/>
+  <text x="193.0" y="265.888" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="10.8" font-weight="600" fill="#7DD3FC" text-anchor="middle">Outbox 至少一次投递</text>
+  <polyline points="386,239 386,283" fill="none" stroke="#38BDF8" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowCyan)"/>
+  <rect x="400" y="251" width="178" height="22" rx="11.0" fill="#0C2A3E" stroke="#0369A1" stroke-width="1.0"/>
+  <text x="489.0" y="265.888" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="10.8" font-weight="600" fill="#7DD3FC" text-anchor="middle">签名回调幂等入箱</text>
+  <polyline points="862,239 862,283" fill="none" stroke="#A78BFA" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowViolet)"/>
+  <rect x="876" y="251" width="246" height="22" rx="11.0" fill="#23183E" stroke="#6D28D9" stroke-width="1.0"/>
+  <text x="999.0" y="265.888" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="10.8" font-weight="600" fill="#DDD6FE" text-anchor="middle">Bearer 鉴权 + 角色命令矩阵校验</text>
+  <rect x="36" y="288" width="1288" height="230" rx="16" fill="url(#coreGrad)" stroke="#3B82F6" stroke-width="1.6" filter="url(#cardShadow)"/>
+  <rect x="52" y="302" width="24" height="24" rx="6" fill="#60A5FA" stroke="none" stroke-width="0"/>
+  <text x="64" y="318.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.5" font-weight="800" fill="#0B1120" text-anchor="middle">3</text>
+  <text x="86" y="318.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="14.2" font-weight="700" fill="#F8FAFC" text-anchor="start">Coordinator Control Plane · 中心状态与租约内核 (SQLite WAL v4 · BEGIN IMMEDIATE 串行短事务)</text>
+  <text x="1308" y="318" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.5" font-weight="500" fill="#94A3B8" text-anchor="end">store.py · workflow.py · slices.py</text>
+  <rect x="54" y="338" width="304" height="164" rx="10" fill="#0A1324" stroke="#1E3A5F" stroke-width="1.2"/>
+  <line x1="55" y1="348" x2="55" y2="492" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+  <text x="68" y="360" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">Transactional Inbox &amp; Outbox</text>
+  <circle cx="69" cy="376" r="2.2" fill="#38BDF8"/>
+  <text x="77" y="380" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">inbox: 请求哈希幂等回执与原快照</text>
+  <circle cx="69" cy="395.5" r="2.2" fill="#38BDF8"/>
+  <text x="77" y="399.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">outbox: 紧急事件 priority=10 秒级插队</text>
+  <circle cx="69" cy="415.0" r="2.2" fill="#38BDF8"/>
+  <text x="77" y="419.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">300s 老化提权防普通协同流饥饿</text>
+  <circle cx="69" cy="434.5" r="2.2" fill="#38BDF8"/>
+  <text x="77" y="438.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">5 次指数退避进 DLQ · 限 3 次审计重放</text>
+  <circle cx="69" cy="454.0" r="2.2" fill="#38BDF8"/>
+  <text x="77" y="458.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">严禁在 SQL 写锁内跑测试或外网请求</text>
+  <rect x="372" y="338" width="310" height="164" rx="10" fill="#0A1324" stroke="#1E3A5F" stroke-width="1.2"/>
+  <line x1="373" y1="348" x2="373" y2="492" stroke="#60A5FA" stroke-width="3" stroke-linecap="round"/>
+  <text x="386" y="360" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">Work Items &amp; Quotient DAG</text>
+  <circle cx="387" cy="376" r="2.2" fill="#60A5FA"/>
+  <text x="395" y="380" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">长期业务单: DEV / CONTRACT_PATCH / BUG</text>
+  <circle cx="387" cy="395.5" r="2.2" fill="#60A5FA"/>
+  <text x="395" y="399.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">聚合 BUG 父单统管同 change_set_id 子单</text>
+  <circle cx="387" cy="415.0" r="2.2" fill="#60A5FA"/>
+  <text x="395" y="419.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">商图防环 + 父单依赖向全部子叶继承</text>
+  <circle cx="387" cy="434.5" r="2.2" fill="#60A5FA"/>
+  <text x="395" y="438.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">提交序 rowid 锁定多依赖最新快照</text>
+  <circle cx="387" cy="454.0" r="2.2" fill="#60A5FA"/>
+  <text x="395" y="458.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">同代 2 独立模块 × 2 人类申诉触发熔断</text>
+  <rect x="696" y="338" width="310" height="164" rx="10" fill="#0A1324" stroke="#1E3A5F" stroke-width="1.2"/>
+  <line x1="697" y1="348" x2="697" y2="492" stroke="#818CF8" stroke-width="3" stroke-linecap="round"/>
+  <text x="710" y="360" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">Attempts &amp; Lease Fencing</text>
+  <circle cx="711" cy="376" r="2.2" fill="#818CF8"/>
+  <text x="719" y="380" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">单次 A2A 执行与长期工单严格拆表</text>
+  <circle cx="711" cy="395.5" r="2.2" fill="#818CF8"/>
+  <text x="719" y="399.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">终态 completed/failed/canceled 永不复活</text>
+  <circle cx="711" cy="415.0" r="2.2" fill="#818CF8"/>
+  <text x="719" y="419.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">lease_epoch 栅栏 + 单 Worker 活跃槽唯一</text>
+  <circle cx="711" cy="434.5" r="2.2" fill="#818CF8"/>
+  <text x="719" y="438.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">input-required 秒级释放槽位防单槽自锁</text>
+  <circle cx="711" cy="454.0" r="2.2" fill="#818CF8"/>
+  <text x="719" y="458.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">打回进 REWORK 必须重新领单建新 attempt</text>
+  <rect x="1020" y="338" width="286" height="164" rx="10" fill="#0A1324" stroke="#1E3A5F" stroke-width="1.2"/>
+  <line x1="1021" y1="348" x2="1021" y2="492" stroke="#A78BFA" stroke-width="3" stroke-linecap="round"/>
+  <text x="1034" y="360" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">Protected Slice Registry</text>
+  <circle cx="1035" cy="376" r="2.2" fill="#A78BFA"/>
+  <text x="1043" y="380" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">受保护配置 slices/&lt;slice_id&gt;.yaml</text>
+  <circle cx="1035" cy="395.5" r="2.2" fill="#A78BFA"/>
+  <text x="1043" y="399.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">纵切写权限: 代码 + tests/unit/&lt;slice&gt;</text>
+  <circle cx="1035" cy="415.0" r="2.2" fill="#A78BFA"/>
+  <text x="1043" y="419.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">provides_contracts 自动路由补丁单</text>
+  <circle cx="1035" cy="434.5" r="2.2" fill="#A78BFA"/>
+  <text x="1043" y="438.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">服务端绑定 worker 与人类 owner_user_id</text>
+  <circle cx="1035" cy="454.0" r="2.2" fill="#A78BFA"/>
+  <text x="1043" y="458.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">L0 骨架未批或责任人离线自动挂起</text>
+  <polyline points="80,523 80,565" fill="none" stroke="#2DD4BF" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" marker-start="url(#arrowTeal)" marker-end="url(#arrowTeal)"/>
+  <rect x="94" y="533" width="240" height="22" rx="11.0" fill="#0A2E2B" stroke="#0D9488" stroke-width="1.0"/>
+  <text x="214.0" y="547.888" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="10.8" font-weight="600" fill="#5EEAD4" text-anchor="middle">领单 / 续租 / 交 base+source SHA</text>
+  <polyline points="536,521 536,565" fill="none" stroke="#FBBF24" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowAmber)"/>
+  <rect x="550" y="533" width="250" height="22" rx="11.0" fill="#31230B" stroke="#D97706" stroke-width="1.0"/>
+  <text x="675.0" y="547.888" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="10.8" font-weight="600" fill="#FDE68A" text-anchor="middle">GATE_PENDING 触发三关候选合入</text>
+  <polyline points="982,523 982,565" fill="none" stroke="#FB7185" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" marker-start="url(#arrowEmerald)" marker-end="url(#arrowRose)"/>
+  <rect x="996" y="533" width="254" height="22" rx="11.0" fill="#321325" stroke="#E11D48" stroke-width="1.0"/>
+  <text x="1123.0" y="547.888" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="10.8" font-weight="600" fill="#FDA4AF" text-anchor="middle">锁定快照送测 / 回传 QA 裁决与复现包</text>
+  <rect x="36" y="570" width="366" height="288" rx="14" fill="#0B1F24" stroke="#14B8A6" stroke-width="1.4" filter="url(#cardShadow)"/>
+  <rect x="52" y="584" width="24" height="24" rx="6" fill="#2DD4BF" stroke="none" stroke-width="0"/>
+  <text x="64" y="600.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.5" font-weight="800" fill="#0B1120" text-anchor="middle">4</text>
+  <text x="86" y="600.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="14.2" font-weight="700" fill="#F8FAFC" text-anchor="start">Slice Workers · 切片研发节点</text>
+  <text x="386" y="600" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.5" font-weight="500" fill="#94A3B8" text-anchor="end">worker.py</text>
+  <rect x="52" y="618" width="334" height="112" rx="10" fill="#07151A" stroke="#115E59" stroke-width="1.2"/>
+  <line x1="53" y1="628" x2="53" y2="720" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round"/>
+  <text x="66" y="640" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">Disposable Git Worktree</text>
+  <circle cx="67" cy="656" r="2.2" fill="#2DD4BF"/>
+  <text x="75" y="660" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">按 base_sha 拉起一次性无头 worktree</text>
+  <circle cx="67" cy="675.5" r="2.2" fill="#2DD4BF"/>
+  <text x="75" y="679.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">后台线程自动 heartbeat 续租，失租即停</text>
+  <circle cx="67" cy="695.0" r="2.2" fill="#2DD4BF"/>
+  <text x="75" y="699.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">全量提交后写 refs/hub/submissions/*</text>
+  <circle cx="67" cy="714.5" r="2.2" fill="#2DD4BF"/>
+  <text x="75" y="718.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">缺上游字段抛 dependency-request/v1</text>
+  <rect x="52" y="740" width="334" height="104" rx="10" fill="#07151A" stroke="#115E59" stroke-width="1.2"/>
+  <line x1="53" y1="750" x2="53" y2="834" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round"/>
+  <text x="66" y="762" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">EverOS Experience Hook (Opt-in)</text>
+  <circle cx="67" cy="778" r="2.2" fill="#2DD4BF"/>
+  <text x="75" y="782" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">默认关闭；开启须显式注入 redact() 脱敏</text>
+  <circle cx="67" cy="797.5" r="2.2" fill="#2DD4BF"/>
+  <text x="75" y="801.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">开工 recall 历史教训 · 闭环 record 轨迹</text>
+  <circle cx="67" cy="817.0" r="2.2" fill="#2DD4BF"/>
+  <text x="75" y="821.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">外部记忆异常静默计数，绝不阻断主状态机</text>
+  <rect x="422" y="570" width="516" height="288" rx="14" fill="url(#gateGrad)" stroke="#F59E0B" stroke-width="1.5" filter="url(#cardShadow)"/>
+  <rect x="438" y="584" width="24" height="24" rx="6" fill="#FBBF24" stroke="none" stroke-width="0"/>
+  <text x="450" y="600.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.5" font-weight="800" fill="#0B1120" text-anchor="middle">5</text>
+  <text x="472" y="600.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="14.2" font-weight="700" fill="#F8FAFC" text-anchor="start">Gatekeeper · 三关门禁与原子发布</text>
+  <text x="922" y="600" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.5" font-weight="500" fill="#94A3B8" text-anchor="end">gatekeeper.py · git.py</text>
+  <rect x="438" y="618" width="152" height="114" rx="10" fill="#0B161E" stroke="#78350F" stroke-width="1.2"/>
+  <line x1="439" y1="628" x2="439" y2="722" stroke="#FBBF24" stroke-width="3" stroke-linecap="round"/>
+  <text x="452" y="640" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">Gate 1 · 边界围栏</text>
+  <circle cx="453" cy="656" r="2.2" fill="#FBBF24"/>
+  <text x="461" y="660" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">Slice 路径与重命名</text>
+  <circle cx="453" cy="675.5" r="2.2" fill="#FBBF24"/>
+  <text x="461" y="679.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">禁软链与子模块</text>
+  <circle cx="453" cy="695.0" r="2.2" fill="#FBBF24"/>
+  <text x="461" y="699.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">正类型可满足契约</text>
+  <circle cx="453" cy="714.5" r="2.2" fill="#FBBF24"/>
+  <text x="461" y="718.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">全依赖双祖先核验</text>
+  <polyline points="592,675 602,675" fill="none" stroke="#FBBF24" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowAmber)"/>
+  <rect x="604" y="618" width="152" height="114" rx="10" fill="#0B161E" stroke="#78350F" stroke-width="1.2"/>
+  <line x1="605" y1="628" x2="605" y2="722" stroke="#FBBF24" stroke-width="3" stroke-linecap="round"/>
+  <text x="618" y="640" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">Gate 2 · 基线实测</text>
+  <circle cx="619" cy="656" r="2.2" fill="#FBBF24"/>
+  <text x="627" y="660" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">可信基线套件优先</text>
+  <circle cx="619" cy="675.5" r="2.2" fill="#FBBF24"/>
+  <text x="627" y="679.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">精确 nodeid 核验</text>
+  <circle cx="619" cy="695.0" r="2.2" fill="#FBBF24"/>
+  <text x="627" y="699.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">严禁 skip / xfail</text>
+  <circle cx="619" cy="714.5" r="2.2" fill="#FBBF24"/>
+  <text x="627" y="718.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">含已验收切片回归</text>
+  <polyline points="758,675 768,675" fill="none" stroke="#FBBF24" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowAmber)"/>
+  <rect x="770" y="618" width="152" height="114" rx="10" fill="#0B161E" stroke="#78350F" stroke-width="1.2"/>
+  <line x1="771" y1="628" x2="771" y2="722" stroke="#FBBF24" stroke-width="3" stroke-linecap="round"/>
+  <text x="784" y="640" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">Gate 3 · 语义审查</text>
+  <circle cx="785" cy="656" r="2.2" fill="#FBBF24"/>
+  <text x="793" y="660" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">Python AST 切片</text>
+  <circle cx="785" cy="675.5" r="2.2" fill="#FBBF24"/>
+  <text x="793" y="679.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">提取下游调用方</text>
+  <circle cx="785" cy="695.0" r="2.2" fill="#FBBF24"/>
+  <text x="793" y="699.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">可插拔强模型排雷</text>
+  <circle cx="785" cy="714.5" r="2.2" fill="#FBBF24"/>
+  <text x="793" y="718.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">未配默认拒绝合入</text>
+  <polyline points="680,732 680,747" fill="none" stroke="#34D399" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowEmerald)"/>
+  <rect x="438" y="749" width="484" height="95" rx="10" fill="#071F1B" stroke="#10B981" stroke-width="1.4"/>
+  <text x="454" y="770" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.6" font-weight="700" fill="#6EE7B7" text-anchor="start">Durable Merge Intent -&gt; Bare Git Ref CAS (runner · review · git)</text>
+  <text x="454" y="792" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.1" font-weight="400" fill="#D1FAE5" text-anchor="start">1. 先写 merge_intents(PREPARED) 冻结工单版本、回归集与 breaking 审批凭据</text>
+  <text x="454" y="812" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.1" font-weight="400" fill="#D1FAE5" text-anchor="start">2. 调 git update-ref 校验旧 base 原子推 candidate -&gt; MERGED_PENDING_QA</text>
+  <text x="454" y="832" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.0" font-weight="400" fill="#A7F3D0" text-anchor="start">3. 若集成分支已前移则标 STALE 退回重验；崩溃由 Gatekeeper.recover() 恢复</text>
+  <polyline points="402,675 420,675" fill="none" stroke="#2DD4BF" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="3,3" marker-end="url(#arrowTeal)"/>
+  <polyline points="938,796 956,796" fill="none" stroke="#34D399" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowEmerald)"/>
+  <rect x="958" y="570" width="366" height="288" rx="14" fill="#1D1222" stroke="#F43F5E" stroke-width="1.4" filter="url(#cardShadow)"/>
+  <rect x="974" y="584" width="24" height="24" rx="6" fill="#FB7185" stroke="none" stroke-width="0"/>
+  <text x="986" y="600.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.5" font-weight="800" fill="#0B1120" text-anchor="middle">6</text>
+  <text x="1008" y="600.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="14.2" font-weight="700" fill="#F8FAFC" text-anchor="start">QA Loop · 独立验收闭环</text>
+  <text x="1308" y="600" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.5" font-weight="500" fill="#94A3B8" text-anchor="end">qa-verdict/v1</text>
+  <rect x="974" y="618" width="334" height="112" rx="10" fill="#120B18" stroke="#4C1D3D" stroke-width="1.2"/>
+  <line x1="975" y1="628" x2="975" y2="720" stroke="#34D399" stroke-width="3" stroke-linecap="round"/>
+  <text x="988" y="640" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">Snapshot-Bound Verdict</text>
+  <circle cx="989" cy="656" r="2.2" fill="#34D399"/>
+  <text x="997" y="660" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">严格校验与研发及全部子单人类身份独立</text>
+  <circle cx="989" cy="675.5" r="2.2" fill="#34D399"/>
+  <text x="997" y="679.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">锁死精确 integration_sha 跑黑盒/联调验收</text>
+  <circle cx="989" cy="695.0" r="2.2" fill="#34D399"/>
+  <text x="997" y="699.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">PASS -&gt; 晋升 ACCEPTED / CLOSED 并入回归集</text>
+  <circle cx="989" cy="714.5" r="2.2" fill="#34D399"/>
+  <text x="997" y="718.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">全员通过且 pending=[] -&gt; READY_FOR_RELEASE</text>
+  <rect x="974" y="740" width="334" height="104" rx="10" fill="#120B18" stroke="#4C1D3D" stroke-width="1.2"/>
+  <line x1="975" y1="750" x2="975" y2="834" stroke="#FB7185" stroke-width="3" stroke-linecap="round"/>
+  <text x="988" y="762" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">Bug Repro &amp; Exception Fuses</text>
+  <circle cx="989" cy="778" r="2.2" fill="#FB7185"/>
+  <text x="997" y="782" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">FAIL -&gt; 强制附可执行复现包 bug-report/v1</text>
+  <circle cx="989" cy="797.5" r="2.2" fill="#FB7185"/>
+  <text x="997" y="801.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">研发无权自关 Bug；同单失败 3 轮升级 BLOCKED</text>
+  <circle cx="989" cy="817.0" r="2.2" fill="#FB7185"/>
+  <text x="997" y="821.0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">ENV_ERROR(2次) / FLAKY(1次) 独立熔断不罚研发</text>
+  <rect x="36" y="874" width="1288" height="46" rx="12" fill="#0B1324" stroke="#1E293B" stroke-width="1.2"/>
+  <rect x="52" y="884" width="304" height="26" rx="13.0" fill="#13203B" stroke="#1D4ED8" stroke-width="1.0"/>
+  <text x="204.0" y="900.96" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="600" fill="#93C5FD" text-anchor="middle">执行完成 ≠ 门禁合入 ≠ QA 验收 ≠ 发布就绪</text>
+  <rect x="370" y="884" width="304" height="26" rx="13.0" fill="#0B2926" stroke="#047857" stroke-width="1.0"/>
+  <text x="522.0" y="900.96" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="600" fill="#6EE7B7" text-anchor="middle">SQLite 写锁内零网络请求 / 零测试子进程</text>
+  <rect x="688" y="884" width="304" height="26" rx="13.0" fill="#2B1F0B" stroke="#B45309" stroke-width="1.0"/>
+  <text x="840.0" y="900.96" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="600" fill="#FCD34D" text-anchor="middle">可信基线独占测试套件与中央保护路径</text>
+  <rect x="1006" y="884" width="302" height="26" rx="13.0" fill="#2C1222" stroke="#BE123C" stroke-width="1.0"/>
+  <text x="1157.0" y="900.96" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="600" fill="#FDA4AF" text-anchor="middle">生产须前置容器隔离沙箱与 TLS 反向代理</text>
+</svg>

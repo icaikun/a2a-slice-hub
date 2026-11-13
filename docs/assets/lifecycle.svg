@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 444" width="1360" height="444" role="img" aria-label="A2A Slice Hub Dual-State Lifecycle Pipeline">
+
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090F1D"/>
+      <stop offset="55%" stop-color="#0D1628"/>
+      <stop offset="100%" stop-color="#0A1220"/>
+    </linearGradient>
+    <linearGradient id="coreGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#111C33"/>
+      <stop offset="100%" stop-color="#0F1A2E"/>
+    </linearGradient>
+    <linearGradient id="gateGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#132226"/>
+      <stop offset="100%" stop-color="#0E1D24"/>
+    </linearGradient>
+    <pattern id="dotGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#64748B" opacity="0.16"/>
+    </pattern>
+    <filter id="cardShadow" x="-4%" y="-4%" width="108%" height="112%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#020617" flood-opacity="0.45"/>
+    </filter>
+    <marker id="arrowSlate" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#38BDF8"/>
+    </marker>
+    <marker id="arrowViolet" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#A78BFA"/>
+    </marker>
+    <marker id="arrowTeal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#2DD4BF"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#FBBF24"/>
+    </marker>
+    <marker id="arrowEmerald" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#34D399"/>
+    </marker>
+    <marker id="arrowRose" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#FB7185"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1360" height="444" rx="20" fill="url(#bgGrad)" stroke="#1E293B" stroke-width="2"/>
+  <rect x="0" y="0" width="1360" height="444" rx="20" fill="url(#dotGrid)"/>
+  <text x="36" y="44" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="19.5" font-weight="800" fill="#F8FAFC" text-anchor="start">Dual-State Lifecycle &amp; Four-Stage Decoupling · 双层状态机与四阶严格解耦</text>
+  <text x="36" y="67" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.3" font-weight="400" fill="#94A3B8" text-anchor="start">为什么拆成两张状态表：A2A 协议中 Attempt 终态不可复活；门禁打回或 QA 抓虫只在 Work Item 上推进轮次并派发全新 Attempt</text>
+  <rect x="36" y="88" width="1288" height="180" rx="14" fill="#0E192D" stroke="#3B82F6" stroke-width="1.4" filter="url(#cardShadow)"/>
+  <rect x="52" y="102" width="232" height="24" rx="12.0" fill="#172554" stroke="#2563EB" stroke-width="1.0"/>
+  <text x="168.0" y="117.96" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="600" fill="#93C5FD" text-anchor="middle">Layer A · Work Item 长期业务工单</text>
+  <text x="300" y="118" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.5" font-weight="400" fill="#94A3B8" text-anchor="start">跨多轮提交持续存活 · 承载版本 CAS、依赖快照 integration_sha、重做预算与仲裁代次</text>
+  <rect x="54" y="140" width="166" height="62" rx="10" fill="#1E293B" stroke="#38BDF8" stroke-width="1.4"/>
+  <text x="137.0" y="165" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12" font-weight="700" fill="#7DD3FC" text-anchor="middle">READY / WAITING</text>
+  <text x="137.0" y="187" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="400" fill="#CBD5E1" text-anchor="middle">L0 审批 · 依赖就绪</text>
+  <polyline points="223,171 242,171" fill="none" stroke="#64748B" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowSlate)"/>
+  <rect x="246" y="140" width="166" height="62" rx="10" fill="#172554" stroke="#60A5FA" stroke-width="1.4"/>
+  <text x="329.0" y="165" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12" font-weight="700" fill="#BFDBFE" text-anchor="middle">ACTIVE</text>
+  <text x="329.0" y="187" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="400" fill="#CBD5E1" text-anchor="middle">已派发 · 租约生效</text>
+  <polyline points="415,171 434,171" fill="none" stroke="#64748B" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowSlate)"/>
+  <rect x="438" y="140" width="166" height="62" rx="10" fill="#2E220B" stroke="#FBBF24" stroke-width="1.4"/>
+  <text x="521.0" y="165" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12" font-weight="700" fill="#FDE68A" text-anchor="middle">GATE_PENDING</text>
+  <text x="521.0" y="187" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="400" fill="#CBD5E1" text-anchor="middle">研发提交待过三关</text>
+  <polyline points="607,171 626,171" fill="none" stroke="#64748B" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowSlate)"/>
+  <rect x="630" y="140" width="166" height="62" rx="10" fill="#2A1B3D" stroke="#A78BFA" stroke-width="1.4"/>
+  <text x="713.0" y="165" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12" font-weight="700" fill="#DDD6FE" text-anchor="middle">GATING</text>
+  <text x="713.0" y="187" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="400" fill="#CBD5E1" text-anchor="middle">PREPARED 冻结版本</text>
+  <polyline points="799,171 818,171" fill="none" stroke="#64748B" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowSlate)"/>
+  <rect x="822" y="140" width="198" height="62" rx="10" fill="#0B2926" stroke="#2DD4BF" stroke-width="1.4"/>
+  <text x="921.0" y="165" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12" font-weight="700" fill="#99F6E4" text-anchor="middle">MERGED_PENDING_QA</text>
+  <text x="921.0" y="187" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="400" fill="#CBD5E1" text-anchor="middle">Git CAS 已入分支</text>
+  <polyline points="1023,171 1040,171" fill="none" stroke="#64748B" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowSlate)"/>
+  <rect x="1044" y="140" width="256" height="62" rx="10" fill="#062E22" stroke="#34D399" stroke-width="1.4"/>
+  <text x="1172.0" y="165" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="12" font-weight="700" fill="#A7F3D0" text-anchor="middle">ACCEPTED / CLOSED</text>
+  <text x="1172.0" y="187" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="400" fill="#CBD5E1" text-anchor="middle">独立 QA 签收终态</text>
+  <polyline points="921,204 921,238 890,238" fill="none" stroke="#FB7185" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4,3"/>
+  <rect x="346" y="226" width="540" height="24" rx="12.0" fill="#321325" stroke="#E11D48" stroke-width="1.0"/>
+  <text x="616.0" y="241.816" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="10.6" font-weight="600" fill="#FDA4AF" text-anchor="middle">门禁拒收 / Git 基线过时 / QA FAIL(附 bug-report/v1) 退回 REWORK；满 3 轮或双人争议进 BLOCKED</text>
+  <polyline points="342,238 137,238 137,206" fill="none" stroke="#FB7185" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4,3" marker-end="url(#arrowRose)"/>
+  <rect x="36" y="286" width="760" height="136" rx="14" fill="#101829" stroke="#818CF8" stroke-width="1.3" filter="url(#cardShadow)"/>
+  <rect x="52" y="300" width="250" height="24" rx="12.0" fill="#1E1B4B" stroke="#6366F1" stroke-width="1.0"/>
+  <text x="177.0" y="315.96" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="600" fill="#C7D2FE" text-anchor="middle">Layer B · Attempt 单次 A2A 执行租约</text>
+  <text x="316" y="316" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.3" font-weight="400" fill="#94A3B8" text-anchor="start">每次领单递增 lease_epoch · 终态不可变 · 杜绝旧僵尸进程覆写新提交</text>
+  <rect x="54" y="338" width="130" height="64" rx="9" fill="#1E1B4B" stroke="#818CF8" stroke-width="1.3"/>
+  <text x="119.0" y="363" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.3" font-weight="700" fill="#F8FAFC" text-anchor="middle">submitted</text>
+  <text x="119.0" y="385" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="10.8" font-weight="400" fill="#CBD5E1" text-anchor="middle">占用槽位</text>
+  <rect x="212" y="338" width="130" height="64" rx="9" fill="#172554" stroke="#38BDF8" stroke-width="1.3"/>
+  <text x="277.0" y="363" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.3" font-weight="700" fill="#F8FAFC" text-anchor="middle">working</text>
+  <text x="277.0" y="385" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="10.8" font-weight="400" fill="#CBD5E1" text-anchor="middle">无头 worktree</text>
+  <rect x="370" y="338" width="166" height="64" rx="9" fill="#2E220B" stroke="#FBBF24" stroke-width="1.3"/>
+  <text x="453.0" y="363" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.3" font-weight="700" fill="#F8FAFC" text-anchor="middle">input-required</text>
+  <text x="453.0" y="385" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="10.8" font-weight="400" fill="#CBD5E1" text-anchor="middle">释放槽位等契约</text>
+  <rect x="564" y="338" width="214" height="64" rx="9" fill="#062E22" stroke="#34D399" stroke-width="1.3"/>
+  <text x="671.0" y="363" font-family="'JetBrains Mono','Cascadia Code',Consolas,monospace" font-size="11.3" font-weight="700" fill="#F8FAFC" text-anchor="middle">completed / failed / canceled</text>
+  <text x="671.0" y="385" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="10.8" font-weight="400" fill="#CBD5E1" text-anchor="middle">不可变终态 (永不复活)</text>
+  <polyline points="186,370 209,370" fill="none" stroke="#818CF8" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowViolet)"/>
+  <polyline points="344,370 367,370" fill="none" stroke="#FBBF24" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" marker-start="url(#arrowTeal)" marker-end="url(#arrowAmber)"/>
+  <polyline points="538,370 561,370" fill="none" stroke="#34D399" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arrowEmerald)"/>
+  <rect x="816" y="286" width="508" height="136" rx="14" fill="#191322" stroke="#F43F5E" stroke-width="1.3" filter="url(#cardShadow)"/>
+  <rect x="832" y="300" width="216" height="24" rx="12.0" fill="#321325" stroke="#E11D48" stroke-width="1.0"/>
+  <text x="940.0" y="315.96" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11" font-weight="600" fill="#FDA4AF" text-anchor="middle">Circuit Breakers · 硬性熔断阈值</text>
+  <text x="1062" y="316" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#94A3B8" text-anchor="start">人工签名 resume 开启新仲裁代</text>
+  <rect x="832" y="334" width="232" height="74" rx="10" fill="#110C18" stroke="#4C1D3D" stroke-width="1.2"/>
+  <line x1="833" y1="344" x2="833" y2="398" stroke="#FB7185" stroke-width="3" stroke-linecap="round"/>
+  <text x="846" y="356" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">研发与协商上限</text>
+  <circle cx="847" cy="372" r="2.2" fill="#FB7185"/>
+  <text x="855" y="376" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">协商 / 打回满 3 轮 -&gt; BLOCKED</text>
+  <circle cx="847" cy="391.5" r="2.2" fill="#FB7185"/>
+  <text x="855" y="395.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">2 模块 × 2 人类申诉 -&gt; BLOCKED</text>
+  <rect x="1076" y="334" width="232" height="74" rx="10" fill="#110C18" stroke="#1E3A5F" stroke-width="1.2"/>
+  <line x1="1077" y1="344" x2="1077" y2="398" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+  <text x="1090" y="356" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="12.3" font-weight="700" fill="#F1F5F9" text-anchor="start">QA 环境与抖动隔离</text>
+  <circle cx="1091" cy="372" r="2.2" fill="#38BDF8"/>
+  <text x="1099" y="376" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">ENV_ERROR 重试 2 次 -&gt; BLOCKED_ENV</text>
+  <circle cx="1091" cy="391.5" r="2.2" fill="#38BDF8"/>
+  <text x="1099" y="395.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif" font-size="11.2" font-weight="400" fill="#CBD5E1" text-anchor="start">FLAKY 复跑不一致 -&gt; 熔断不罚研发</text>
+</svg>
