@@ -14,6 +14,7 @@ from .im import FeishuAdapter, FeishuVerifier, DingTalkVerifier
 from .models import (ApprovalCreate, ApprovalUse, Claim, Dependency, Dispute, Heartbeat,
                      ItemCreate, MergeRequest, QAResult, Transition, WorkerRegistration, EpicCreate, BugReport, DependencyRequest)
 from .models import TaskStatus, DevSubmission, QAVerdict, GateMerge
+from .policy import IdentityPolicy
 from .store import encode, strict_integer
 
 
@@ -32,7 +33,8 @@ def task_view(attempt):
 
 def create_app(store, approvals, principals: dict[str, Principal], *, gatekeeper=None,
                public_url="http://localhost:8000", a2a_worker_id=None, feishu_encrypt_key=None, feishu_users=None,
-               dingtalk_secret=None, dingtalk_users=None):
+               dingtalk_secret=None, dingtalk_users=None, identity_policy: IdentityPolicy | None = None,
+               feishu_card_ingress=None, dingtalk_card_ingress=None):
     if not principals or any(len(k) < 32 for k in principals):
         raise ValueError("configure strong bearer credentials")
     if store.registry is not None and any(p.role == "qa" and
@@ -94,6 +96,16 @@ def create_app(store, approvals, principals: dict[str, Principal], *, gatekeeper
     def replay_dead_letter(key: str, actor=Depends(require("coordinator"))):
         return store.replay_dead_letter(key, actor.name)
 
+    @app.get("/hub/outbox/destinations/dead-letters")
+    def destination_dead_letters(destination_id: str | None = None, limit: int = 100,
+                                 actor=Depends(require("coordinator"))):
+        return store.destination_dead_letters(destination_id, limit)
+
+    @app.post("/hub/outbox/destinations/{destination_id}/dead-letters/{event_id}/replay")
+    def replay_destination_dead_letter(destination_id: str, event_id: str,
+                                       actor=Depends(require("coordinator"))):
+        return store.replay_destination_dead_letter(event_id, destination_id, actor.name)
+
     @app.post("/hub/items", status_code=201)
     def create_item(body: ItemCreate, actor=Depends(require("coordinator"))):
         return store.create_item(**body.model_dump())
@@ -120,7 +132,10 @@ def create_app(store, approvals, principals: dict[str, Principal], *, gatekeeper
     def qa(key: str, body: QAResult, actor=Depends(require("qa"))):
         if (body.outcome == "FAIL" or (body.outcome is None and body.passed is False)) and body.report is None:
             raise HTTPException(422, "failed QA requires bug-report/v1")
-        return store.qa(key, body.expected_version, body.integration_sha, body.passed, actor.owner_user_id or actor.name,
+        reviewer = actor.owner_user_id or actor.name
+        if identity_policy is not None:
+            reviewer = identity_policy.authorize_independent_qa(reviewer, owners=())
+        return store.qa(key, body.expected_version, body.integration_sha, body.passed, reviewer,
                         body.report, outcome=body.outcome)
 
     @app.post("/hub/merge")
@@ -135,7 +150,13 @@ def create_app(store, approvals, principals: dict[str, Principal], *, gatekeeper
 
     @app.post("/hub/approvals/accept")
     def approve(body: ApprovalUse, actor=Depends(require("approver"))):
-        return approvals.approve(body.card, actor.name)
+        name = actor.name
+        if identity_policy is not None:
+            from .channels.common import signed_card
+            card = signed_card(body.card)
+            name = identity_policy.authorize_approval(actor.owner_user_id or actor.name,
+                item_owner=approvals.target_owner(card["approval_id"]), action=card["action"])
+        return approvals.approve(body.card, name)
 
     @app.post("/hub/workers/heartbeat")
     def register_worker(body: WorkerRegistration, actor=Depends(require("worker"))):
@@ -158,12 +179,24 @@ def create_app(store, approvals, principals: dict[str, Principal], *, gatekeeper
             raise HTTPException(503, "gatekeeper not configured")
         return store.check_release_ready(key, gatekeeper.git)
 
+    async def callback_body(request):
+        raw = bytearray()
+        async for chunk in request.stream():
+            if len(raw) + len(chunk) > 1_000_000:
+                raise HTTPException(413, "callback too large")
+            raw.extend(chunk)
+        return bytes(raw)
+
+    def callback_json(raw):
+        try:
+            return json.loads(raw)
+        except RecursionError as exc:
+            raise ValueError("callback JSON is too deeply nested") from exc
+
     async def feishu_request(request):
         if verifier is None:
             raise HTTPException(503, "Feishu verifier not configured")
-        raw = await request.body()
-        if len(raw) > 1_000_000:
-            raise HTTPException(413, "callback too large")
+        raw = await callback_body(request)
         receipt = verifier.verify(request.headers, raw)
         digest = hashlib.sha256(raw).hexdigest()
         with store.connect() as conn:
@@ -173,7 +206,7 @@ def create_app(store, approvals, principals: dict[str, Principal], *, gatekeeper
                     raise Conflict("callback nonce reused with different payload")
                 return receipt, digest, None, json.loads(old["result"])
         try:
-            body = json.loads(raw)
+            body = callback_json(raw)
             if not isinstance(body, dict) or "encrypt" in body:
                 raise ValueError()
         except ValueError:
@@ -195,7 +228,7 @@ def create_app(store, approvals, principals: dict[str, Principal], *, gatekeeper
             actor = authenticate(request.headers.get("authorization"))
             if actor.role != "im_gateway":
                 raise Forbidden("gateway required")
-            event = FeishuAdapter.incoming(await request.json())
+            event = FeishuAdapter.incoming(callback_json(await callback_body(request)))
             return {"ignored": event is None, "accepted_as_command": False}
         receipt, digest, body, old = await feishu_request(request)
         if old is not None:
@@ -211,6 +244,19 @@ def create_app(store, approvals, principals: dict[str, Principal], *, gatekeeper
             return old
         if body.get("type") == "url_verification":
             return save_receipt(receipt, digest, {"challenge": body["challenge"]})
+        if feishu_card_ingress is not None:
+            return feishu_card_ingress.card_response(body)
+        if identity_policy is not None:
+            from .policy import ExternalAccount
+            from .channels.common import object_field, signed_card
+            event = object_field(body, "event") if "event" in body else body
+            header, operator = object_field(body, "header"), object_field(event, "operator")
+            card = signed_card(object_field(event, "action").get("value"))
+            account = ExternalAccount("feishu", header.get("tenant_key") or event.get("tenant_key"),
+                header.get("app_id") or event.get("app_id"), operator.get("open_id"))
+            actor = identity_policy.authorize_approval(account,
+                item_owner=approvals.target_owner(card["approval_id"]), action=card["action"])
+            return approvals.approve(card, actor, receipt=receipt, digest=digest, timeout=2.0)
         try:
             event = body.get("event", body)
             open_id = event["operator"]["open_id"]
@@ -222,17 +268,25 @@ def create_app(store, approvals, principals: dict[str, Principal], *, gatekeeper
             raise Forbidden("unknown or unauthorized Feishu approver")
         return save_receipt(receipt, digest, result)
 
+    @app.post("/im/dingtalk/cards")
+    async def dingtalk_card(request: Request, actor=Depends(require("im_gateway"))):
+        if dingtalk_card_ingress is None:
+            raise HTTPException(503, "DingTalk card ingress not configured")
+        raw = await callback_body(request)
+        body = callback_json(raw)
+        if not isinstance(body, dict):
+            raise ValueError("expected card callback object")
+        return dingtalk_card_ingress.card_response(body)
+
     @app.post("/im/dingtalk/events")
     async def dingtalk_event(request: Request, actor=Depends(require("im_gateway"))):
         # The timestamp signature alone does not bind the sender or body.
         if ding_verifier is None:
             raise HTTPException(503, "DingTalk verifier not configured")
-        raw = await request.body()
-        if len(raw) > 1_000_000:
-            raise HTTPException(413, "callback too large")
+        raw = await callback_body(request)
         receipt = ding_verifier.verify(request.headers, raw)
         digest = hashlib.sha256(raw).hexdigest()
-        body = json.loads(raw)
+        body = callback_json(raw)
         if not isinstance(body, dict) or "encrypt" in body:
             raise ValueError("expected robot JSON callback")
         with store.connect() as conn:
@@ -276,7 +330,7 @@ def create_app(store, approvals, principals: dict[str, Principal], *, gatekeeper
             if len(raw) > 1_000_000:
                 return error(-32600, "request exceeds 1MB limit")
         try:
-            body = json.loads(raw)
+            body = callback_json(raw)
         except (ValueError, UnicodeError):
             return error(-32700, "parse error")
         if not isinstance(body, dict):
@@ -346,8 +400,11 @@ def create_app(store, approvals, principals: dict[str, Principal], *, gatekeeper
                             attempt = store.get_attempt(message["taskId"])
                             if attempt["work_item_id"] != message.get("contextId"):
                                 return error(-32602, "task context mismatch")
+                        reviewer = actor.owner_user_id or actor.name
+                        if identity_policy is not None:
+                            reviewer = identity_policy.authorize_independent_qa(reviewer, owners=())
                         item = store.qa(message["contextId"], metadata["expected_state_version"],
-                            verdict.integration_sha, None, actor.owner_user_id or actor.name, verdict.report,
+                            verdict.integration_sha, None, reviewer, verdict.report,
                             outcome=verdict.outcome, request_id=receipt, request_digest=digest)
                         return {"jsonrpc": "2.0", "id": request_id, "result": {"kind": "message", "role": "agent",
                             "messageId": message["messageId"], "parts": [{"kind": "data", "data": item}]}}

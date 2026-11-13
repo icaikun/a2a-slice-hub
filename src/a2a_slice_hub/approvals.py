@@ -40,14 +40,14 @@ class Approvals:
                             "slice_id": item.get("slice_id", "epic"), "owner": item.get("owner", "coordinator")})
         return card
 
-    def approve(self, card, actor, *, receipt=None, digest=None):
+    def approve(self, card, actor, *, receipt=None, digest=None, timeout: float | None = None):
         fields = {"approval_id", "item_id", "action", "subject_digest", "expected_state_version", "expires_at", "signature"}
         if set(card) != fields or not isinstance(card.get("signature"), str) or not re.fullmatch(r"[0-9a-f]{64}", card["signature"]):
             raise Forbidden("invalid approval card")
         payload = {k: v for k, v in card.items() if k != "signature"}
         if not hmac.compare_digest(self._mac(payload), card["signature"]):
             raise Forbidden("invalid approval signature")
-        with self.store.transaction() as conn:
+        with self.store.transaction(timeout=timeout) as conn:
             if receipt:
                 old = conn.execute("SELECT * FROM inbox WHERE id=?", (receipt,)).fetchone()
                 if old:
@@ -87,12 +87,20 @@ class Approvals:
                 for leaf in children or [item]:
                     self.store._ready(conn, leaf["id"], ready_state="REWORK")
             # breaking_contract grants only the exact signed diff at this item version.
-            self.store.emit(conn, "approval.accepted", {("epic_id" if approval["action"] == "l0" else "item"): item["id"], "approved_by": actor})
+            self.store.emit(conn, "approval.accepted", {("epic_id" if approval["action"] == "l0" else "item"): item["id"], "approved_by": actor, "approval_id": approval["id"],
+                "action": approval["action"], "expected_state_version": approval["expected_version"]})
             result = {"approved": True, "duplicate": False}
             if receipt:
                 conn.execute("INSERT INTO inbox VALUES(?,?,?)", (receipt, digest, encode(result)))
             return result
 
+
+    def target_owner(self, approval_id):
+        with self.store.connect() as conn:
+            approval = self.store.one(conn, "approvals", approval_id)
+            if approval["action"] == "l0":
+                return None
+            return self.store.one(conn, "work_items", approval["item"])["owner"]
 
     @staticmethod
     def _check_target(item, action):

@@ -1,6 +1,6 @@
 [project]
 name = "a2a-slice-hub"
-version = "0.1.0"
+version = "0.2.0"
 description = "Adversarially hardened A2A multi-agent parallel development & independent QA orchestrator with vertical slice ownership, atomic Git CAS gatekeeper, and IM group mirroring."
 readme = "README.md"
 license = { text = "MIT" }

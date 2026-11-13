@@ -380,7 +380,7 @@ def test_concurrent_bootstrap_and_all_migrations_atomic_idempotent(tmp_path, clo
     with ThreadPoolExecutor(max_workers=6) as pool:
         stores = list(pool.map(start, range(6)))
     with stores[0].connect() as conn:
-        assert conn.execute('PRAGMA user_version').fetchone()[0] == 4
+        assert conn.execute('PRAGMA user_version').fetchone()[0] == 6
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
         if version in {1, 2, 3}:
             assert conn.execute('SELECT state FROM merge_intents').fetchone()[0] == 'PREPARED'

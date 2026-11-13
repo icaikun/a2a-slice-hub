@@ -79,8 +79,8 @@ Semantic AST caller extraction is advisory, not a complete call graph or proof.
 
 ## SQLite, Git and recovery
 
-Single-host local-disk SQLite WAL v4 is supported; shared NFS/SMB or multi-Hub HA is not.
-Bootstrap and v1-to-v4 migration run in one BEGIN IMMEDIATE transaction with foreign
+Single-host local-disk SQLite WAL v6 is supported; shared NFS/SMB or multi-Hub HA is not.
+Bootstrap and v1-to-v6 migration run in one BEGIN IMMEDIATE transaction with foreign
 keys/journal retention. Back up first. Duplicate legacy human votes fail migration
 atomically: stop writers, back up the database and audit evidence, independently resolve
 the identity/generation conflict, then retry on a copy before promotion. Do not silently
@@ -107,14 +107,19 @@ atomically. Encrypted envelopes are rejected. The legacy gateway path is read-on
 DingTalk requires a separate bearer-authenticated gateway, fresh timestamp HMAC and
 allowlisted staff identity. That HMAC is NOT a body signature: a compromised gateway can
 substitute the first body. Prefer nonblank msgId receipts; fallback is timestamp/sign;
-same ID with changed bytes conflicts. No DingTalk/chat callback executes approvals or
-arbitrary commands. Operators must validate TLS, actual tenant identities and credentials.
+same ID with changed bytes conflicts. Legacy robot/chat callbacks do not execute approvals or arbitrary commands.
+The separate `/im/dingtalk/cards` gateway route and authenticated Stream card topic
+can approve signed cards through canonical identity policy, never through contact
+pairing alone. Feishu channel ingress enforces the orchestrator-only inbound topology.
+Card callbacks persist provider-scoped receipts, enforce independent human ownership,
+and use a bounded 2-second write lock timeout. Operators must validate TLS, actual
+tenant identities, provider templates and credentials; see `docs/milestone-b.md`.
 
 Outbox is at-least-once: a send accepted before ack crash may repeat. Reuse stable event
 IDs and provider reconciliation; no exactly-once promise. Urgent topics have priority 10;
 normal events available for 300 seconds gain effective priority 10, with oldest-first
 ordering. Availability, lease, tries and DLQ fences still apply. Expired claims count
-against the default five-attempt delivery cap. Errors retain exception class/status,
+against the default five-attempt delivery cap. Legacy errors retain exception class/status; per-destination errors retain only a generic diagnostic,
 not provider response bodies, webhook URLs or exception messages containing secrets.
 
 Coordinator-only single-event replay preserves ID and atomically audits actor/count.
@@ -123,7 +128,7 @@ Exhaustion rejects without another outbox event (no rejection storm); there is n
 automatic replay. These limits are not a tenant-wide rate limiter or delivery SLA.
 DLQ inspection can expose event content; restrict credentials. Audit outbox is not an
 immutable external ledger. Export audit records before trusted bounded pruning (at most
-1000 successfully delivered non-DLQ rows/call). Inbox/intents/disputes remain retained;
+1000 successfully delivered non-DLQ rows/call, with no undelivered destination rows). Inbox/intents/disputes remain retained;
 no automatic receipt expiry or storage bound is promised. Legacy ID-only inbox receipts
 return current attempts, not reconstructed historical snapshots.
 
@@ -137,3 +142,13 @@ experience trajectories. Experience export requires explicit opt-in plus redacti
 Keep local failure traces private until reviewed. Arrange a private maintainer channel
 before sharing sensitive evidence; do not put credentials in public issues. Local
 regression results do not constitute sandbox, live tenant or production acceptance.
+
+## Governed engineering memory
+
+Evidence is always unverified and scope-isolated; candidates become verified only
+after exact-snapshot Gatekeeper and independent QA acceptance. Active Git ADRs
+can suppress stale cases at recall. Default secret redaction is additive to caller
+redaction, not proof that arbitrary proprietary content is safe to publish. Enable
+EverOS export only with project-specific disclosure policy; external delivery is
+at-least-once and already-exported data cannot be revoked by local invalidation.
+See [Milestone C](docs/milestone-c.md) for service-context and acceptance boundaries.

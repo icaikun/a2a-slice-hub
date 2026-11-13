@@ -1,6 +1,6 @@
 # 多人多 Agent 并行协同开发总体架构蓝图（v2.0：业务切片制 + 独立 QA 闭环）
 
-> 实现状态：v0.1.0 参考协调器完成五轮对抗工程加固；当前为单机 SQLite WAL v4 + Git CAS。证据见 [Round 5 报告](round5_report.md)，权威状态见 [状态转换表](state_transitions.md)。OS/容器隔离、真实 IM 租户、TLS 与 Git ref ACL 属于外部部署前提，未宣称验收。下文标注为外部或规划的调度、看板与记忆组件不属于现成产品能力。
+> 实现状态：v0.1.0 参考协调器完成五轮对抗工程加固；当前为单机 SQLite WAL v6 + Git CAS。证据见 [Round 5 报告](round5_report.md)，权威状态见 [状态转换表](state_transitions.md)。OS/容器隔离、真实 IM 租户、TLS 与 Git ref ACL 属于外部部署前提，未宣称验收。下文标注为外部或规划的调度、看板与记忆组件不属于现成产品能力。
 
 > [!IMPORTANT]
 > **v2.0 核心升级（经 `gpt-6-astra` 深度挑刺校准）**：
@@ -33,7 +33,7 @@ flowchart TB
         KB["外部规划: 飞书多维表格 / GitHub Projects 看板"]
     end
 
-    subgraph L2["2. 中心调度中枢 Hub (FastAPI + SQLite WAL v4 + merge_intents / outbox)"]
+    subgraph L2["2. 中心调度中枢 Hub (FastAPI + SQLite WAL v6 + merge_intents / outbox)"]
         BR["统一 IMAdapter (HTTP 飞书/钉钉适配器 + Outbox 至少一次投递)"]
         ARCH["外部总包 + Hub L0 审批 (Slice、契约与 DAG)"]
         DAG["业务单 work_item + 执行 attempt 状态机 (CAS + 环检测)"]
@@ -169,7 +169,7 @@ QA 给研发传的不是口水话，而是机器可直接重放的结构化证�
 
 ---
 
-## 六、 当前持久化结构（SQLite WAL，schema user_version=4）
+## 六、 当前持久化结构（SQLite WAL，schema user_version=6）
 
 实际字段以 `store.py` / `workflow.py` 的 DDL 与原子迁移为准，不是 PostgreSQL 后端：
 
@@ -184,6 +184,9 @@ QA 给研发传的不是口水话，而是机器可直接重放的结构化证�
 | approvals | item, subject_digest, expected_version, expires, action, approved_by；精确版本签名审批 |
 | inbox | id, digest, result；入口幂等与原响应快照，旧 ID-only 行保留兼容 |
 | outbox | topic, payload, available, claim, claimed_until, tries, delivered, dead_letter, priority, replay_count；租约投递与审计 |
+| outbox_destinations | destination_id, provider, enabled, created_at; registered delivery targets |
+| outbox_deliveries | event_id + destination_id; independent leases, retry budgets, DLQ and provider receipts |
+| card_projections | approval_id + destination_id; provider card IDs and monotonic rendered state |
 | workers | worker_id, owner_user_id, endpoint_url, skills, expires；认证映射与在线能力 |
 | accepted_slices | slice_id, integration_sha；持久化回归范围 |
 
@@ -212,3 +215,9 @@ PostgreSQL、远程容器 runner 属于未来扩容选项。拓扑中的看板�
 聚合父单依赖由每个叶子继承；父依赖变更不得影响已派发子单。DAG 检查把同一
 change_set_id 折叠为一个原子验收单元，拒绝组内与跨组传递环。父子必须绑定同一 Epic，
 prepare_merge 重新验证父 Epic 的 ACTIVE 状态与目标分支，旧不一致数据也 fail closed。
+
+Milestone B dual-IM integration and deployment boundaries: [integration guide](milestone-b.md).
+
+Milestone C implements scoped engineering memory and the embeddable `HubRuntime`
+control loop over the existing Store state machine. See [Milestone C](milestone-c.md)
+for implemented scope, schema v6, optional export and local-vs-live acceptance limits.

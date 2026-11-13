@@ -285,3 +285,28 @@ class Workflow:
             conn.execute("UPDATE work_items SET flaky_round=1,flaky_observed=?,version=version+1,blocked_reason='qa_flaky_rerun' WHERE id=?", (observed, item["id"]))
         self.emit(conn, "qa." + outcome.lower(), {"item": item["id"], "report": report})
         return True
+
+    @staticmethod
+    def migrate_round5(conn):
+        # Execute individually: executescript would commit the migration prematurely.
+        conn.execute("""CREATE TABLE IF NOT EXISTS outbox_destinations (
+            destination_id TEXT PRIMARY KEY, provider TEXT NOT NULL,
+            enabled INTEGER NOT NULL DEFAULT 1, created_at REAL NOT NULL)""")
+        conn.execute("""CREATE TABLE IF NOT EXISTS outbox_deliveries (
+            event_id TEXT NOT NULL REFERENCES outbox(id) ON DELETE CASCADE,
+            destination_id TEXT NOT NULL REFERENCES outbox_destinations(destination_id),
+            available REAL NOT NULL, claimed_until REAL NOT NULL DEFAULT 0, claim TEXT,
+            tries INTEGER NOT NULL DEFAULT 0, delivered INTEGER NOT NULL DEFAULT 0,
+            dead_letter INTEGER NOT NULL DEFAULT 0, last_error TEXT,
+            replay_count INTEGER NOT NULL DEFAULT 0, provider_receipt TEXT,
+            PRIMARY KEY(event_id,destination_id))""")
+        conn.execute("""CREATE TABLE IF NOT EXISTS card_projections (
+            approval_id TEXT NOT NULL REFERENCES approvals(id), destination_id TEXT NOT NULL,
+            provider TEXT NOT NULL, provider_card_id TEXT NOT NULL,
+            rendered_version INTEGER NOT NULL DEFAULT 0, status TEXT NOT NULL DEFAULT 'PENDING',
+            approved_by TEXT, updated_at REAL NOT NULL, PRIMARY KEY(approval_id,destination_id))""")
+        conn.execute("""CREATE TRIGGER IF NOT EXISTS outbox_fanout AFTER INSERT ON outbox BEGIN
+            INSERT OR IGNORE INTO outbox_deliveries(event_id,destination_id,available)
+            SELECT NEW.id,destination_id,NEW.available FROM outbox_destinations WHERE enabled=1;
+            END""")
+        conn.execute("CREATE INDEX IF NOT EXISTS delivery_ready ON outbox_deliveries(destination_id,delivered,dead_letter,available)")

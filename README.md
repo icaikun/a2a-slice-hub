@@ -1,13 +1,13 @@
-# A2A Slice Hub (v0.1.0)
+# A2A Slice Hub (v0.2.0)
 
 > **Multi-agent parallel slice development coordinator** — vertical slice ownership (`slices/*.yaml`), SQLite WAL dual-state orchestration, 3-stage Git atomic CAS gatekeeper, independent snapshot-bound QA closed loop, and Feishu / DingTalk collaboration mirroring.  
-> MIT Licensed · Python 3.11+ · Real Git Worktrees & CAS · 447 Automated Adversarial Tests
+> MIT Licensed · Python 3.11+ · Real Git Worktrees & CAS · 668 Automated Tests
 
 [**System Architecture**](#architecture-overview) · [**Lifecycle & Sequence**](#dual-state-lifecycle--collaboration-flow) · [**Module Map**](#source-module-map) · [**Quickstart**](#local-development) · [**Protocol Matrix**](#a2a-json-rpc-protocol-reference) · [**Security Boundaries**](SECURITY.md) · [**State Machine**](docs/state_transitions.md) · [**中文总体架构蓝图**](docs/architecture_blueprint.md)
 
 ---
 
-**v0.1.0: a complete, inspectable open-source reference coordinator**, hardened
+**Built on the v0.1.0 inspectable open-source reference coordinator**, hardened
 across five adversarial engineering rounds ([Round 1](docs/round1_report.md) ·
 [Round 2](docs/round2_report.md) · [Round 3](docs/round3_report.md) ·
 [Round 4](docs/round4_report.md) · [Round 5](docs/round5_report.md)). Complete
@@ -30,7 +30,7 @@ or full A2A conformance.
 sequenceDiagram
     autonumber
     participant IM as "飞书/钉钉群 (固定3Bot+人类)"
-    participant Hub as "Hub 中枢 (SQLite WAL v4)"
+    participant Hub as "Hub 中枢 (SQLite WAL v6)"
     participant DevB as "Slice Worker B (payments)"
     participant DevA as "Slice Worker A (orders)"
     participant GK as "3-Stage Gatekeeper (Git CAS)"
@@ -56,11 +56,18 @@ sequenceDiagram
 | Plane | Module | Core Responsibility |
 |---|---|---|
 | **Ingress & Schemas** | `src/a2a_slice_hub/api.py`<br/>`src/a2a_slice_hub/models.py` | 6-role Bearer auth, Hub REST (`/hub/*`), bounded A2A 0.3 JSON-RPC (`/a2a`), Feishu/DingTalk webhook ingress |
-| **Coordinator Core** | `src/a2a_slice_hub/store.py`<br/>`src/a2a_slice_hub/workflow.py` | SQLite WAL v4 (`BEGIN IMMEDIATE`), `work_items` × `attempts` CAS, quotient-graph DAG, dependency routing, Outbox aging & DLQ |
+| **Coordinator Core** | `src/a2a_slice_hub/store.py`<br/>`src/a2a_slice_hub/workflow.py` | SQLite WAL v6 (`BEGIN IMMEDIATE`), `work_items` × `attempts` CAS, quotient-graph DAG, dependency routing, Outbox aging & DLQ |
 | **Slice & Governance** | `src/a2a_slice_hub/slices.py`<br/>`src/a2a_slice_hub/approvals.py` | Protected `slices/*.yaml` ownership registry, contract provider lookup, version/digest-bound HMAC approval cards (`l0`, `breaking_contract`, `resume`) |
 | **3-Stage Gatekeeper** | `src/a2a_slice_hub/gatekeeper.py`<br/>`src/a2a_slice_hub/paths.py`<br/>`src/a2a_slice_hub/runner.py`<br/>`src/a2a_slice_hub/review.py` | Slice path & file-mode fence, Positive Habitable JSON Schema evolution check, baseline-owned exact-`nodeid` pytest runner, AST caller extraction & semantic review |
 | **Git & Execution** | `src/a2a_slice_hub/git.py`<br/>`src/a2a_slice_hub/worker.py`<br/>`src/a2a_slice_hub/experience.py` | Detached Git worktrees, immutable merge commits, `git update-ref` atomic CAS, lease-renewing worker slot, opt-in redacted `EverOSHook` |
-| **IM Mirroring** | `src/a2a_slice_hub/im.py`<br/>`src/a2a_slice_hub/config.py` | 3-bot `FeishuAdapter`, `DingTalkAdapter` (Webhook & OpenAPI), signature verifiers, `OutboxDispatcher`, YAML app factory |
+| **Canonical Identity** | `src/a2a_slice_hub/policy.py` | Server-owned persons, external account bindings, contact admission, independent approval/QA and memory scopes |
+| **Trusted Context** | `src/a2a_slice_hub/context.py` | Baseline Git ADRs, whole-package skills lock verification, external task bundles and advisory-only memories |
+| **Coding CLIs** | `src/a2a_slice_hub/coding/base.py`<br/>`src/a2a_slice_hub/coding/codex_cli.py`<br/>`src/a2a_slice_hub/coding/claude_cli.py`<br/>`src/a2a_slice_hub/coding/__init__.py` | Structured CLI results, process containment, environment filtering, path fences and baseline-bound checkpoints |
+| **Dual IM Channels** | `src/a2a_slice_hub/channels/common.py`<br/>`src/a2a_slice_hub/channels/gating.py`<br/>`src/a2a_slice_hub/channels/feishu.py`<br/>`src/a2a_slice_hub/channels/dingtalk.py`<br/>`src/a2a_slice_hub/channels/dispatcher.py`<br/>`src/a2a_slice_hub/channels/__init__.py` | Canonical callback identity, chat admission, provider cards, destination-isolated outbox/DLQ and monotonic projections |
+| **Shared Package Types** | `src/a2a_slice_hub/__init__.py`<br/>`src/a2a_slice_hub/errors.py` | Package entry and typed domain failures shared by API, persistence and gates |
+| **Application Entry** | `src/a2a_slice_hub/config.py`<br/>`src/a2a_slice_hub/__main__.py` | Backward-compatible YAML factory, optional identity policy/card ingress, serve and offline verify-skills commands |
+| **Memory & Runtime** | `src/a2a_slice_hub/knowledge.py`<br/>`src/a2a_slice_hub/runtime.py` | Scope-isolated evidence, QA-verified recovery cases, ADR-aware recall, optional export and unified ticks |
+| **IM Mirroring** | `src/a2a_slice_hub/im.py` | 3-bot `FeishuAdapter`, `DingTalkAdapter` (Webhook & OpenAPI), signature verifiers and legacy `OutboxDispatcher` |
 
 ## What is implemented
 
@@ -245,9 +252,19 @@ not execute approvals or arbitrary group chat text as commands. Robot timestamp
 signatures do not attest the request body; encrypted event subscriptions are not supported.
 
 
+## Dual-IM milestone (v0.2.0 implementation)
+
+The optional `channels` package adds independent Feishu/DingTalk destination
+leases and DLQs, contact-only gating, and shared `approval_id` card projections.
+Interactive card callbacks are separate from legacy chatbot events: DingTalk
+cards use `/im/dingtalk/cards` with `im_gateway` bearer authentication; Feishu
+keeps signed webhook verification. Canonical identity policy prevents cross-IM
+self-approval. SDK imports are optional, and live tenant acceptance is not claimed.
+See [Milestone B integration and verification boundaries](docs/milestone-b.md).
+
 ## Persistence and operations
 
-Bootstrap and migrations are atomic through `PRAGMA user_version=4`; back up first.
+Bootstrap and migrations are atomic through `PRAGMA user_version=6`; back up first.
 QA principals in registry-backed deployments must declare their human `owner_user_id`.
 
 Urgent outbox topics use priority 10. Normal events available for at least 300 seconds
@@ -261,7 +278,8 @@ audit event. Trusted `Store.replay_dead_letter(..., max_replays=3)` accepts an i
 budget from 1 to 10. Successful resets audit actor/event/count in the same transaction.
 There is no bulk/automatic replay and no exactly-once promise. The trusted
 `Store.prune_history(delivered_before=..., limit=100)` helper deletes only bounded
-successfully delivered non-DLQ rows; it never prunes inbox or merge intents.
+successfully delivered non-DLQ rows with no undelivered destination deliveries;
+it never prunes inbox or merge intents.
 Legacy ID-only inbox receipts return current attempt state and cannot reconstruct old snapshots.
 
 The raw `/a2a` handler returns JSON-RPC errors for malformed/nonobject/batch requests,
@@ -331,3 +349,42 @@ after any child is dispatched. Task reads require an elevated read role or the
 actual owning worker role; sharing a worker name grants no authority to other roles.
 Aggregate children must share their parent Epic; merge preparation rechecks the
 parent branch and ACTIVE approval state, including legacy persisted data.
+
+## Engineering memory and runtime (Milestone C)
+
+Schema v6 adds scoped, redacted runtime evidence and independently QA-verified
+troubleshooting cases. `HubRuntime` reuses existing task, gate and QA transitions;
+Git ADRs remain authoritative over all recalled memory. Optional EverOS exports
+never run in the QA transaction. See [Milestone C handoff and acceptance boundaries](docs/milestone-c.md).
+
+### Optional declarative canonical identities
+
+Existing configurations without `identity_policy` retain the legacy mappings.
+Bindings authorize identities; `contacts` only admits contact and never grants roles.
+Secrets remain environment-backed. Optional ingress blocks use the canonical policy:
+
+```yaml
+identity_policy:
+  persons:
+    - person_id: reviewer
+      roles: [approver, qa]
+      owned_slices: []
+      scopes:
+        - {org_id: example-org, project_id: example-project, repo_id: example-repo}
+  bindings:
+    - account: {provider: feishu, tenant_or_corp: example-tenant, app_id: orchestrator, external_user_id: reviewer-open-id}
+      person_id: reviewer
+    - account: {provider: dingtalk, tenant_or_corp: example-corp, app_id: robot, external_user_id: reviewer-staff-id}
+      person_id: reviewer
+  contacts:
+    - account: {provider: feishu, tenant_or_corp: example-tenant, app_id: orchestrator, external_user_id: guest-open-id}
+      admission: pairing
+feishu_card_ingress:
+  orchestrator_app_id: orchestrator
+dingtalk_card_ingress:
+  app_id: robot
+```
+
+Feishu HTTP cards still require `feishu_encrypt_key_env`; DingTalk HTTP cards
+still require an authenticated `im_gateway` bearer. Neither contact admission nor
+an external display name substitutes for a canonical binding.

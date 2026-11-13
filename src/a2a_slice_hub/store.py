@@ -1,6 +1,7 @@
 """Single-host SQLite coordinator. Never perform network or test work in a transaction."""
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 import json
+import re
 from pathlib import Path
 import sqlite3
 import time
@@ -100,14 +101,16 @@ class Store(Workflow):
             conn.execute("PRAGMA foreign_keys=OFF")
             try:
                 conn.execute("BEGIN IMMEDIATE")
-                if conn.execute("PRAGMA user_version").fetchone()[0] > 4:
+                if conn.execute("PRAGMA user_version").fetchone()[0] > 6:
                     raise Conflict("database schema is newer than this Hub")
                 self.migrate(conn, SCHEMA)
                 self.migrate_round3(conn)
                 self.migrate_round4(conn)
+                self.migrate_round5(conn)
+                self.migrate_round6(conn)
                 if conn.execute("PRAGMA foreign_key_check").fetchall():
                     raise Conflict("migration foreign-key check failed")
-                conn.execute("PRAGMA user_version=4")
+                conn.execute("PRAGMA user_version=6")
                 conn.commit()
             except BaseException:
                 conn.rollback()
@@ -115,20 +118,47 @@ class Store(Workflow):
             finally:
                 conn.execute("PRAGMA foreign_keys=ON")
 
+    @staticmethod
+    def migrate_round6(conn):
+        from .knowledge import SCHEMA_V6
+        # Early v6 databases lacked the visibility dimension. Preserve existing rows
+        # as project-visible and rebuild the case uniqueness constraint atomically.
+        for table in ("runtime_evidence", "troubleshooting_cases"):
+            columns = [r[1] for r in conn.execute(f"PRAGMA table_info({table})")]
+            if not columns or "visibility" in columns:
+                continue
+            if table == "runtime_evidence":
+                conn.execute("ALTER TABLE runtime_evidence ADD COLUMN visibility TEXT NOT NULL DEFAULT 'project'")
+            else:
+                definition = next(part for part in SCHEMA_V6.split(";")
+                                  if "CREATE TABLE IF NOT EXISTS troubleshooting_cases (" in part)
+                conn.execute(definition.replace("troubleshooting_cases (", "troubleshooting_cases_scoped ("))
+                fields = ",".join(columns)
+                conn.execute(f"INSERT INTO troubleshooting_cases_scoped({fields}) SELECT {fields} FROM troubleshooting_cases")
+                conn.execute("DROP TABLE troubleshooting_cases")
+                conn.execute("ALTER TABLE troubleshooting_cases_scoped RENAME TO troubleshooting_cases")
+        for statement in SCHEMA_V6.split(";"):
+            if statement.strip():
+                conn.execute(statement)
+
     @contextmanager
     def connect(self):
         conn = sqlite3.connect(self.database, timeout=30, isolation_level=None)
-        conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA foreign_keys=ON")
-        conn.execute("PRAGMA synchronous=FULL")
         try:
+            conn.row_factory = sqlite3.Row
+            conn.execute("PRAGMA foreign_keys=ON")
+            conn.execute("PRAGMA synchronous=FULL")
             yield conn
         finally:
             conn.close()  # Connection context manager alone does NOT close on Windows.
 
     @contextmanager
-    def transaction(self):
+    def transaction(self, timeout=None):
+        if timeout is not None and (not isinstance(timeout, (int, float)) or not 0 <= timeout <= 30):
+            raise ValueError("invalid transaction timeout")
         with self.connect() as conn:
+            if timeout is not None:
+                conn.execute(f"PRAGMA busy_timeout={int(timeout * 1000)}")
             try:
                 conn.execute("BEGIN IMMEDIATE")
                 yield conn
@@ -404,7 +434,7 @@ class Store(Workflow):
             self.emit(conn, "ownership.dispute", {"item": target["id"], "child": item_id,
                 "slice_id": item["slice_id"], "owner": item["owner"], "round": n, "evidence": evidence})
 
-    def qa(self, item_id, expected_version, integration_sha, passed, actor, report=None, *, outcome=None, request_id=None, request_digest=None):
+    def qa(self, item_id, expected_version, integration_sha, passed, actor, report=None, *, outcome=None, request_id=None, request_digest=None, _conn=None):
         outcome = outcome or ("PASS" if passed else "FAIL")
         if outcome not in {"PASS", "FAIL", "ENV_ERROR", "FLAKY"}:
             raise ValueError("invalid QA outcome")
@@ -413,7 +443,7 @@ class Store(Workflow):
         strict_integer(expected_version)
         passed = outcome == "PASS"
         # actor is supplied by the authenticated QA route, never by a developer's body.
-        with self.transaction() as conn:
+        with (self.transaction() if _conn is None else nullcontext(_conn)) as conn:
             if request_id:
                 self._check_merge_receipt(conn, request_id)
                 prior = conn.execute("SELECT * FROM inbox WHERE id=?", (request_id,)).fetchone()
@@ -606,5 +636,139 @@ class Store(Workflow):
             raise ValueError("prune limit exceeds 1000")
         with self.transaction() as conn:
             return conn.execute("""DELETE FROM outbox WHERE id IN (SELECT id FROM outbox
-                WHERE delivered=1 AND dead_letter=0 AND available<? ORDER BY available,id LIMIT ?)""",
+                WHERE delivered=1 AND dead_letter=0 AND available<?
+                AND NOT EXISTS (SELECT 1 FROM outbox_deliveries d WHERE d.event_id=outbox.id AND d.delivered=0)
+                ORDER BY available,id LIMIT ?)""",
                 (delivered_before, limit)).rowcount
+
+    def register_destination(self, destination_id, provider):
+        from .policy import safe_identifier
+        safe_identifier(destination_id)
+        safe_identifier(provider)
+        with self.transaction() as conn:
+            old = conn.execute("SELECT provider FROM outbox_destinations WHERE destination_id=?", (destination_id,)).fetchone()
+            if (old and old["provider"] != provider) or conn.execute(
+                    "SELECT 1 FROM card_projections WHERE destination_id=? AND provider<>?",
+                    (destination_id, provider)).fetchone():
+                raise Conflict("destination provider cannot change")
+            conn.execute("""INSERT INTO outbox_destinations VALUES(?,?,1,?)
+                ON CONFLICT(destination_id) DO UPDATE SET enabled=1""", (destination_id, provider, self.clock()))
+            self._backfill_deliveries(conn, destination_id)
+
+    @staticmethod
+    def _backfill_deliveries(conn, destination_id):
+        conn.execute("""INSERT OR IGNORE INTO outbox_deliveries(event_id,destination_id,available)
+            SELECT o.id,d.destination_id,o.available FROM outbox o CROSS JOIN outbox_destinations d
+            WHERE o.delivered=0 AND d.enabled=1 AND d.destination_id=?""", (destination_id,))
+
+    def claim_delivery(self, destination_id, ttl=30, max_tries=5):
+        import math
+        strict_integer(max_tries, 1)
+        if type(ttl) not in (int, float) or not math.isfinite(ttl) or ttl <= 0:
+            raise ValueError("invalid delivery retry policy")
+        with self.transaction() as conn:
+            enabled = conn.execute("SELECT enabled FROM outbox_destinations WHERE destination_id=?", (destination_id,)).fetchone()
+            if not enabled or not enabled[0]:
+                return None
+            self._backfill_deliveries(conn, destination_id)
+            conn.execute("""UPDATE outbox_deliveries SET dead_letter=1,
+                last_error=COALESCE(last_error,'delivery lease expired'),claim=NULL,claimed_until=0
+                WHERE destination_id=? AND delivered=0 AND dead_letter=0 AND tries>=? AND claimed_until<=?""",
+                (destination_id, max_tries, self.clock()))
+            row = conn.execute("""SELECT d.*,o.id,o.topic,o.payload,o.priority FROM outbox_deliveries d
+                JOIN outbox o ON o.id=d.event_id WHERE d.destination_id=? AND d.delivered=0
+                AND d.dead_letter=0 AND d.available<=? AND d.claimed_until<=?
+                ORDER BY CASE WHEN o.priority>=10 OR (? - d.available)>=300 THEN 10 ELSE o.priority END DESC,
+                d.available,o.rowid LIMIT 1""", (destination_id, self.clock(), self.clock(), self.clock())).fetchone()
+            if row is None:
+                return None
+            token = uid()
+            conn.execute("""UPDATE outbox_deliveries SET claim=?,claimed_until=?,tries=tries+1
+                WHERE event_id=? AND destination_id=?""", (token, self.clock()+ttl, row["id"], destination_id))
+            return dict(row) | {"claim": token, "tries": row["tries"]+1}
+
+    def ack_delivery(self, event_id, destination_id, claim, success, error=None, *, provider_receipt=None, max_tries=5):
+        with self.transaction() as conn:
+            row = conn.execute("SELECT * FROM outbox_deliveries WHERE event_id=? AND destination_id=?",
+                               (event_id, destination_id)).fetchone()
+            if row is None:
+                raise Conflict("unknown delivery")
+            delay = 0 if success else min(300, 5 * (2 ** min(max(row["tries"]-1, 0), 6)))
+            # Do not store arbitrary provider exception text (URLs/credentials/headers).
+            diagnostic = None if success else "delivery failed"
+            if not success and isinstance(error, str) and re.fullmatch(
+                    r"(?:[A-Za-z][A-Za-z0-9]*(?:Error|Exception)|Conflict|Forbidden|GateRejected|NotFound)(?:: HTTP [1-5][0-9]{2})?", error):
+                diagnostic = error
+            changed = conn.execute("""UPDATE outbox_deliveries SET delivered=?,claim=NULL,claimed_until=0,
+                available=?,dead_letter=?,last_error=?,provider_receipt=COALESCE(?,provider_receipt)
+                WHERE event_id=? AND destination_id=? AND claim=? AND delivered=0 AND dead_letter=0 AND claimed_until>?""",
+                (int(success), self.clock()+delay, int(not success and row["tries"]>=max_tries), diagnostic,
+                 provider_receipt, event_id, destination_id, claim, self.clock())).rowcount
+            if not changed:
+                raise Conflict("stale delivery claim")
+            if success:
+                conn.execute("""UPDATE outbox SET delivered=1 WHERE id=? AND NOT EXISTS (
+                    SELECT 1 FROM outbox_destinations d LEFT JOIN outbox_deliveries v
+                    ON v.destination_id=d.destination_id AND v.event_id=outbox.id
+                    WHERE d.enabled=1 AND (v.delivered IS NULL OR v.delivered=0))""", (event_id,))
+
+    def destination_dead_letters(self, destination_id=None, limit=100):
+        strict_integer(limit, 1)
+        if limit > 1000:
+            raise ValueError("invalid dead letter limit")
+        with self.connect() as conn:
+            return [dict(r) for r in conn.execute("""SELECT d.*,o.topic FROM outbox_deliveries d
+                JOIN outbox o ON o.id=d.event_id WHERE d.dead_letter=1 AND (? IS NULL OR d.destination_id=?)
+                ORDER BY d.available,d.event_id,d.destination_id LIMIT ?""", (destination_id, destination_id, limit))]
+
+    def replay_destination_dead_letter(self, event_id, destination_id, actor, max_replays=3):
+        from .policy import safe_identifier
+        safe_identifier(actor)
+        strict_integer(max_replays, 1)
+        if max_replays > 10:
+            raise ValueError("replay budget exceeds 10")
+        with self.transaction() as conn:
+            row = conn.execute("SELECT * FROM outbox_deliveries WHERE event_id=? AND destination_id=?",
+                               (event_id, destination_id)).fetchone()
+            if not row or row["delivered"] or not row["dead_letter"]:
+                raise Conflict("only undelivered dead letters can be replayed")
+            if row["replay_count"] >= max_replays:
+                raise Conflict("dead-letter replay budget exhausted")
+            conn.execute("""UPDATE outbox_deliveries SET dead_letter=0,tries=0,available=?,claim=NULL,
+                claimed_until=0,replay_count=replay_count+1 WHERE event_id=? AND destination_id=?""",
+                (self.clock(), event_id, destination_id))
+            self.emit(conn, "outbox.destination_replayed", {"event_id": event_id, "destination_id": destination_id,
+                "actor": actor, "replay_count": row["replay_count"]+1})
+            return dict(conn.execute("SELECT * FROM outbox_deliveries WHERE event_id=? AND destination_id=?",
+                                    (event_id, destination_id)).fetchone())
+
+    def record_card_projection(self, approval_id, destination_id, provider, provider_card_id, *,
+                               rendered_version=1, status="PENDING", approved_by=None):
+        from .policy import safe_identifier
+        for value in (destination_id, provider):
+            safe_identifier(value)
+        if (not isinstance(provider_card_id, str) or not provider_card_id
+                or len(provider_card_id) > 512 or any(c.isspace() or ord(c) < 32 for c in provider_card_id)):
+            raise ValueError("invalid provider card identifier")
+        strict_integer(rendered_version, 1)
+        if status not in {"PENDING", "APPROVED", "EXPIRED"}:
+            raise ValueError("invalid card status")
+        with self.transaction() as conn:
+            destination = conn.execute("SELECT provider FROM outbox_destinations WHERE destination_id=?",
+                                       (destination_id,)).fetchone()
+            if destination is not None and destination["provider"] != provider:
+                raise Conflict("projection provider differs from destination")
+            return bool(conn.execute("""INSERT INTO card_projections VALUES(?,?,?,?,?,?,?,?)
+                ON CONFLICT(approval_id,destination_id) DO UPDATE SET provider=excluded.provider,
+                provider_card_id=excluded.provider_card_id,rendered_version=excluded.rendered_version,
+                status=excluded.status,approved_by=excluded.approved_by,updated_at=excluded.updated_at
+                WHERE card_projections.rendered_version<excluded.rendered_version
+                AND card_projections.provider=excluded.provider
+                AND card_projections.provider_card_id=excluded.provider_card_id
+                AND NOT (card_projections.status IN ('APPROVED','EXPIRED') AND excluded.status='PENDING')""",
+                (approval_id, destination_id, provider, provider_card_id, rendered_version, status,
+                 approved_by, self.clock())).rowcount)
+
+    def get_card_projections(self, approval_id):
+        with self.connect() as conn:
+            return [dict(r) for r in conn.execute("SELECT * FROM card_projections WHERE approval_id=? ORDER BY destination_id", (approval_id,))]

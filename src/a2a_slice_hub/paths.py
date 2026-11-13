@@ -8,8 +8,10 @@ CONTROL_NAMES = {
     "conftest.py", "pytest.ini", "pyproject.toml", "setup.cfg", "setup.py", "tox.ini",
     "uv.lock", "poetry.lock", "pipfile", "pipfile.lock", ".gitattributes", ".gitmodules",
     "sitecustomize.py", "usercustomize.py", "requirements.txt", "requirements-dev.txt",
+    "agents.md", "claude.md", ".mcp.json",
 }
-CONTROL_ROOTS = {".github", ".agents", ".codex", ".hub", "scripts", "slices", "migrations"}
+CONTROL_ROOTS = {".github", ".agents", ".claude", ".codex", ".hub", "scripts", "slices", "migrations"}
+CONTROL_PREFIXES = {"docs/adr"}
 RESERVED = {"con", "prn", "aux", "nul"} | {f"{x}{i}" for x in ("com", "lpt") for i in range(1, 10)}
 
 
@@ -32,7 +34,10 @@ def inside(name, prefix):
 
 def protected(name):
     parts = name.casefold().split("/")
-    return (parts[0] == "tests" and (len(parts) < 2 or parts[1] != "unit")) or parts[0] in CONTROL_ROOTS or any(p in CONTROL_NAMES for p in parts) or parts[-1].endswith(".pth")
+    return ((parts[0] == "tests" and (len(parts) < 2 or parts[1] != "unit"))
+            or parts[0] in CONTROL_ROOTS or any(p in CONTROL_NAMES for p in parts)
+            or parts[-1].endswith(".pth")
+            or any(inside(name.casefold(), p) for p in CONTROL_PREFIXES))
 
 
 def enforce(name, allowed):

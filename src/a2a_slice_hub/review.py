@@ -214,6 +214,7 @@ class ReviewContext:
     diff: str
     callers: tuple[dict, ...]
     incomplete: bool
+    active_adrs: tuple[dict, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -282,7 +283,9 @@ def context_for(git, base, candidate, limit=80):
         incomplete = True
     diff = patch[:256_000].decode("utf-8", errors="replace")
     # Python AST is a heuristic, not a whole-program call graph (reflection/dispatch are unknown).
-    return ReviewContext(base, candidate, tuple(changed), tuple(sorted(symbols)), diff, tuple(callers), incomplete)
+    from .context import load_adrs
+    adrs = load_adrs(git, base, paths=changed)
+    return ReviewContext(base, candidate, tuple(changed), tuple(sorted(symbols)), diff, tuple(callers), incomplete, adrs)
 
 
 def check_contracts(git, base, candidate, paths, *, kind="CONTRACT_PATCH", breaking=False):
