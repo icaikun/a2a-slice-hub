@@ -1,0 +1,69 @@
+{
+  "round": 4,
+  "date": "2026-11-13",
+  "platform": "native Windows",
+  "command": ".\\.venv\\Scripts\\python.exe tests/run_windows_inherited_temp.py -W error -p no:cacheprovider --basetemp=.codex_round4_tmp/full -q --junitxml=.codex_round4_tmp/full-results.xml",
+  "result": {
+    "tests": 253,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 253,
+    "warnings": 0,
+    "duration_seconds": 241.3,
+    "new_round4_tests": 98
+  },
+  "counts_by_module": {
+    "tests.test_api_im": 10,
+    "tests.test_gatekeeper": 29,
+    "tests.test_publication_hygiene": 1,
+    "tests.test_qa": 3,
+    "tests.test_review": 3,
+    "tests.test_round2": 55,
+    "tests.test_round3": 35,
+    "tests.test_round4": 98,
+    "tests.test_store": 14,
+    "tests.test_worker": 5
+  },
+  "artifacts": {
+    ".codex_round4_tmp/full-results.xml": "732bd502d90a98af9fc3b7a024cd4039139e00f4d8063a521bb8a287e0c61c2a",
+    ".codex_round4_tmp/full.log": "d2cc101d71648fb9f795263861110e61f32a91129b5d04e76fc9e99488b0ac75"
+  },
+  "verified_source_sha256": {
+    "src/a2a_slice_hub/api.py": "0218f9b21fb7c9ab976646f90f73806cf4a1459ac5779459c7b5cfa3c02b38ba",
+    "src/a2a_slice_hub/approvals.py": "bfa7e7130d68c8d713c04d9646ea69d5f22d6e78ab1893476dabd4fa233e8788",
+    "src/a2a_slice_hub/config.py": "6db7f62980e78ad42a7e483a72b9a79d7c38116e0e1a9e16d1888127b073d2cb",
+    "src/a2a_slice_hub/gatekeeper.py": "ff166436e19c8fe51367d6ecced43898f4ce291a96ac56f95dc9925137b48682",
+    "src/a2a_slice_hub/im.py": "323e9cd0a2cf15511ab83c238119a407283d66b14d255b20a3e8c12e8857bd07",
+    "src/a2a_slice_hub/models.py": "64282acf5ef40c0d414423d3b8abed1709166315006d9975fb2414f0c55ad0d7",
+    "src/a2a_slice_hub/review.py": "c3cc34fd814c2aa9a56fe658d7048e0f1c8c10944ef3dd98757cdcc77e4fe578",
+    "src/a2a_slice_hub/store.py": "64bfacc52b74c7aff32c794adcb8608603f6b50e1adf1d182608a3350bb55227",
+    "src/a2a_slice_hub/workflow.py": "049c2ca543dcb99f456cb2afa2a2f77eea1a5cca5c9c11defb1d4a95c12dbfab",
+    "tests/test_round4.py": "0eec7708f27e909e63c18fdd502e03d5acb8f68ec05b4e04d5de99bec1207403",
+    "tests/test_round3.py": "e15a64a0a2e82580ce682854d1d9a37bfdef97a66e9e83d28c71f00b19ec6fa9",
+    "pyproject.toml": "1470e948f75f717d2a18e5d00664463d5e232d75986cc21706bd8f8fcb65669e",
+    "uv.lock": "718cbbfa842b2634b4547071496d751b29a38faf5aa8d55cb73408d1df56396c"
+  },
+  "round5_observations": {
+    "schema_direction": {
+      "schema_compatible": true,
+      "before_accepts": true,
+      "after_accepts": false
+    },
+    "gatekeeper_role": {
+      "jsonrpc": "2.0",
+      "id": "gate-role",
+      "error": {
+        "code": -32000,
+        "message": "cannot submit work"
+      }
+    }
+  },
+  "limitations": [
+    "Exception-injected crashes, not physical power loss or kernel termination",
+    "Mocked provider HTTP, no tenant delivery acceptance",
+    "OS sandbox deployment not verified",
+    "General bidirectional JSON Schema compatibility not proven",
+    "Standalone gatekeeper A2A role entry remains inconsistent; REST is available"
+  ]
+}

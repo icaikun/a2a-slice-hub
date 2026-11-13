@@ -1,0 +1,145 @@
+{
+  "round": 5,
+  "date": "2026-11-13",
+  "version": "0.1.0",
+  "platform": "native Windows",
+  "command": ".\\.venv\\Scripts\\python.exe tests/run_windows_inherited_temp.py -W error -p no:cacheprovider --basetemp=.codex_round5_tmp/full -q --junitxml=.codex_round5_tmp/full-results.xml",
+  "result": {
+    "tests": 447,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 447,
+    "warnings": 0,
+    "duration_seconds": 368.7,
+    "new_round5_tests": 175,
+    "additional_hygiene_controls": 19
+  },
+  "counts_by_module": {
+    "tests.test_api_im": 10,
+    "tests.test_gatekeeper": 29,
+    "tests.test_publication_hygiene": 20,
+    "tests.test_qa": 3,
+    "tests.test_review": 3,
+    "tests.test_round2": 55,
+    "tests.test_round3": 35,
+    "tests.test_round4": 98,
+    "tests.test_round5": 175,
+    "tests.test_store": 14,
+    "tests.test_worker": 5
+  },
+  "artifacts": {
+    ".codex_round5_tmp/full-results.xml": "ac30005809549d37ea97105661efd8bd6bd250e0cdeb28e6caef86ad857bc24b",
+    ".codex_round5_tmp/full.log": "b97b1d3da232cf3e1df5e4810d8ce1a5d8a162dce6b1e0c631bb9f300be450b3"
+  },
+  "verified_source_sha256": {
+    "src/a2a_slice_hub/api.py": "1be976d2efe5c208eba80b965136b9f7948e16febc512fe825170998149d00e2",
+    "src/a2a_slice_hub/approvals.py": "bab7bff47af3b7e334507190fc4cd16204e52e0299bc66a6c810f4d3224a0c03",
+    "src/a2a_slice_hub/config.py": "6db7f62980e78ad42a7e483a72b9a79d7c38116e0e1a9e16d1888127b073d2cb",
+    "src/a2a_slice_hub/errors.py": "ab3124c3c32cb5922cca80582b6c695ed049c9b3a1047d206d977ceb120d9512",
+    "src/a2a_slice_hub/experience.py": "02d91f9b08d355b86f8222e2ef60b8a6f03741d7b2e7f66c9166af230c3b956f",
+    "src/a2a_slice_hub/gatekeeper.py": "384d51c0a5713f68f47950bce29cf84420f24274a681ba8feba3388a6fe2693c",
+    "src/a2a_slice_hub/git.py": "e62c8c7b83282266ed32aa43c69828eaecaf88f7e8b150c31b9abe7c65f7c473",
+    "src/a2a_slice_hub/im.py": "323e9cd0a2cf15511ab83c238119a407283d66b14d255b20a3e8c12e8857bd07",
+    "src/a2a_slice_hub/models.py": "64282acf5ef40c0d414423d3b8abed1709166315006d9975fb2414f0c55ad0d7",
+    "src/a2a_slice_hub/paths.py": "7ebb88187b7edf3a415f1cdc0c506255b3f64f3875f9f4f737c5502ce7d84e87",
+    "src/a2a_slice_hub/review.py": "024d5079d96ea584715ffef61b630254fdda3707e4ac2cd3aee8b4feffecf7ba",
+    "src/a2a_slice_hub/runner.py": "9ec8917f09fde6552d3b6ca440b19371dfa497332f5a24d123232c6800fde9c1",
+    "src/a2a_slice_hub/slices.py": "3db67ab79905cebbc9ad0c6af9c509699d4c15d09311f438c133b98d2c172ee3",
+    "src/a2a_slice_hub/store.py": "895f9b6299192fea0e79788e630c9eb964666437316be3785c6489daf7996012",
+    "src/a2a_slice_hub/worker.py": "e0412f5c5d5f672debc0320614f96e43cd753db6b70bf0bd5a7c4fcbdb379cd3",
+    "src/a2a_slice_hub/workflow.py": "a91d0aabd95e007603f5b9bb77be45412cd9753f94e266c4d40562175e24e56e",
+    "src/a2a_slice_hub/__init__.py": "5ceacb03baf1a38db3c9b6f7ce078a5a9480726d32cb2feaade1e28a45e15c5b",
+    "src/a2a_slice_hub/__main__.py": "6c9b695308922e50c23eb9c0a8384720c0a92c7fed3a30c19505e3c59ea27027",
+    "tests/asgi_client.py": "306ff1befb86ed444db04554790ef400084fd48791fa427841d5a6580894c463",
+    "tests/conftest.py": "dea1bc84cace0b8e4563ddcd0c135ac35d30c989699c5401dca144841d1463ed",
+    "tests/run_windows_inherited_temp.py": "f3804f38d50f9633bc2720d102d9bdeda5e002487eb3a26c38b5d3c947c34d40",
+    "tests/test_api_im.py": "ea9081521d9b3fc4f0e6cfc30b9f59b530b3a8448fcc7d182821a923c110bb6c",
+    "tests/test_gatekeeper.py": "df885a113e884039004b67cb21c7eb7c924c9824308fe6b97f33019341b54f47",
+    "tests/test_publication_hygiene.py": "2abbc4d50252a148dc2ff485969948a4cc29263ee5a0b4d31b6fc212bc8f4032",
+    "tests/test_qa.py": "8a44df7e51b207cc35330d2ac7067e98f1813e447dc3f7a6d7e725e8db1ed37a",
+    "tests/test_review.py": "2c5f474acff8851209e15b03bf06f8687ecf564cada90323c683d8385c627f54",
+    "tests/test_round2.py": "04a421e130f4e0e9d8850ebc3ba00c763e97f8b34e945fe7543796b34d1db4a0",
+    "tests/test_round3.py": "e15a64a0a2e82580ce682854d1d9a37bfdef97a66e9e83d28c71f00b19ec6fa9",
+    "tests/test_round4.py": "dc2fcb21ed544f01a69068cddd04b13aade9a18bfde4a475753c468492c405dd",
+    "tests/test_round5.py": "86b26a45b0e8a376237965d2a73d1ca415ecf6e19e5730beb4b6d8390bbc2f90",
+    "tests/test_store.py": "bfeeb29b9508f13ce46f7dc77d6373643138cd246e89c573b048f0f62b180da0",
+    "tests/test_worker.py": "8192401483daf485a9ea695ecd20113aface08b182090e69005c98d29aa61830",
+    "pyproject.toml": "1470e948f75f717d2a18e5d00664463d5e232d75986cc21706bd8f8fcb65669e",
+    "uv.lock": "718cbbfa842b2634b4547071496d751b29a38faf5aa8d55cb73408d1df56396c"
+  },
+  "historical_artifacts_unchanged_sha256": {
+    "docs/round1_report.md": "df37961d9b36c12a54c8e7d736139a5e0466d1cb919f6672e1cb8b0000b66bfd",
+    "docs/round2_report.md": "6e883b63bf765ab2c0ad6e6626fad5e8f1521298eabfc81a18cb086c27ffdd0b",
+    "docs/round3_report.md": "d174a7194030572a9ceeee85e1501acdef5363898d37ac5bc3366bb8b38d4d65",
+    "docs/round3_test_summary.json": "bcbbf6cf578a3515ae8e169874754e81a5b42b56d470cdfa585afbeb4f1ef4fc",
+    "docs/round4_report.md": "c8d8308dc8eef34f6d62a6d92800078b540998dc28244febf1ef12b35bb63247",
+    "docs/round4_test_summary.json": "e4981167f659ed6af070ed7588a2d9b4602f1ae6dec7f8ce6656504ae39cd44c"
+  },
+  "current_document_sha256": {
+    "README.md": "5a7ed3e80b5e068af6c27722cfb06506908efdfe2cb1d10cc47eeb06e1e2324f",
+    "SECURITY.md": "2f1bbe82ec3aa51663e60b4c4d1f946a797eaa332c3e7879708bb96c340cba21",
+    "docs/state_transitions.md": "afa498cba53b108ada4dc4491aa3002823c65ececb83bf3197ea630b648de711",
+    "docs/architecture_blueprint.md": "00f29e9ea75d2dbfd3d0856fb3ff6124565b8d565e559c6519e132a47c6e6b3e",
+    "docs/round5_report.md": "e6c9042e8b213e61a84adc52612113e8728475c2bd51ce757092901b1dd88fc6"
+  },
+  "counter_proofs": {
+    "user_bugs_5_1_to_5_5": "fixed_and_tested",
+    "outbox_aging_and_replay_budget": "fixed_and_tested",
+    "same_name_nonworker_task_read": "reproduced_then_fixed",
+    "json_boolean_numeric_equality": "reproduced_then_fixed",
+    "aggregate_parent_dependency_bypass": "real_git_reproduced_then_fixed",
+    "atomic_group_dependency_cycles": "rejected_and_tested",
+    "aggregate_cross_epic_binding": "reproduced_then_fixed"
+  },
+  "intermediate_runs": [
+    {
+      "artifact": ".codex_round5_tmp/full-initial.log",
+      "passed": 437,
+      "duration_seconds": 345.64,
+      "final_acceptance": false
+    },
+    {
+      "artifact": ".codex_round5_tmp/audit-before.log",
+      "failed_negative_controls": 5
+    },
+    {
+      "artifact": ".codex_round5_tmp/aggregate-fix.log",
+      "passed": 38
+    },
+    {
+      "artifact": ".codex_round5_tmp/epic-before.log",
+      "failed_negative_controls": 3
+    },
+    {
+      "artifact": ".codex_round5_tmp/epic-after.log",
+      "passed": 3
+    }
+  ],
+  "convergence": {
+    "status": "converged_within_declared_support_and_audited_invariants",
+    "confirmed_remaining_P0_P1_P2": [],
+    "formal_exhaustive_proof": false,
+    "production_acceptance": false
+  },
+  "limitations": [
+    "No external sandbox provisioning or hostile-code isolation acceptance",
+    "No live Feishu/DingTalk tenant or notification delivery acceptance",
+    "TLS reverse proxy, Git ref ACLs and single-publisher administration are external prerequisites",
+    "Single-host local-disk SQLite; not shared storage or multi-Hub HA",
+    "Bounded producer-additive schema policy, not general bidirectional entailment",
+    "At-least-once outbox; no tenant-wide rate limit or latency SLA",
+    "Exception injection is not physical power-loss or kernel-kill validation",
+    "User redteam_round5_exploits.py file was not present; supplied scenarios were reconstructed"
+  ],
+  "post_delivery_publication_check": {
+    "passed": 20,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 0,
+    "duration_seconds": 0.17,
+    "artifact": ".codex_round5_tmp/publication-delivery.log",
+    "sha256": "e4b41a298f279bf5e9c4f606615ab69d3fef777f1d768df1bc3e7f9963f25208"
+  }
+}

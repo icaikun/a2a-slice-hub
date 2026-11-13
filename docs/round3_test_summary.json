@@ -1,0 +1,13 @@
+{
+  "tests": 155,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "warnings": 0,
+  "elapsed_seconds": 219.4,
+  "warning_policy": "error",
+  "date": "2026-11-13",
+  "result": "155 passed in 219.40s (0:03:39)",
+  "command": ".\\.venv\\Scripts\\python.exe tests/run_windows_inherited_temp.py -q -p no:cacheprovider --basetemp=.codex_round3_tmp/full -W error --junitxml=.codex_round3_tmp/full-results.xml",
+  "evidence": "Local SQLite, Git subprocesses, HTTP ASGI routes and mocked IM transports; not live tenants"
+}

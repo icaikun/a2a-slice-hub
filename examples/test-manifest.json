@@ -1,0 +1,12 @@
+{
+  "required": {
+    "orders": [
+      "tests/test_acceptance.py::test_total"
+    ],
+    "payments": [
+      "tests/test_acceptance.py::test_total"
+    ]
+  },
+  "accepted": [],
+  "pending": []
+}

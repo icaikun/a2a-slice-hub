@@ -1,0 +1,10 @@
+slice_id: orders
+owner_user_id: user_zhang
+backup_user_id: user_backup
+owned_paths:
+  - src/orders
+provides_contracts:
+  - orders
+consumes_contracts: []
+required_skills:
+  - python

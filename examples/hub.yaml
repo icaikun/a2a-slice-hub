@@ -1,0 +1,40 @@
+# Relative host paths resolve against this configuration file. SQLite must be on local disk.
+database: ../.state/hub.sqlite
+scratch: ../.worktrees
+# Set to a locally initialized bare repository to enable the gate endpoint.
+repository: null
+# Trusted local registry for API-only mode; with Git, prefer committed slices/*.yaml.
+slices: slices
+public_url: http://localhost:8000
+worker_id: worker-a
+allow_local_execution: false
+approval_key_env: HUB_APPROVAL_KEY
+principals:
+  - name: coordinator
+    role: coordinator
+    credential_env: HUB_COORDINATOR_TOKEN
+  - name: worker-a
+    role: worker
+    owner_user_id: user_zhang
+    credential_env: HUB_WORKER_TOKEN
+  - name: independent-qa
+    role: qa
+    owner_user_id: independent_qa_user
+    credential_env: HUB_QA_TOKEN
+  - name: gate-service
+    role: gatekeeper
+    credential_env: HUB_GATE_TOKEN
+  - name: human-approver
+    role: approver
+    credential_env: HUB_APPROVER_TOKEN
+
+# Optional signed Feishu HTTP callbacks. Values belong in environment variables only.
+# feishu_encrypt_key_env: HUB_FEISHU_ENCRYPT_KEY
+# feishu_users:
+#   registered_feishu_open_id: human-approver
+
+# Optional DingTalk robot callback, through an authenticated im_gateway principal.
+# This timestamp signature does not bind the body; no direct public approval ingress.
+# dingtalk_secret_env: HUB_DINGTALK_SIGNING_SECRET
+# dingtalk_users:
+#   registered_staff_id: human-approver

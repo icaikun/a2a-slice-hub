@@ -1,0 +1,58 @@
+{
+  "date": "2026-11-13",
+  "pytest": {
+    "command": ".\\.venv\\Scripts\\pytest.exe -q",
+    "status": "BLOCKED_BEFORE_PROCESS_CREATION",
+    "exit_code": null,
+    "collected": null,
+    "passed": null,
+    "reason": "Restricted-token sandbox cannot enforce split writable root sets; no unsandboxed fallback used."
+  },
+  "static": {
+    "python_files": 24,
+    "source_lines": 1508,
+    "test_function_definitions": 48,
+    "lexical_delimiter_errors": [],
+    "sqlite_schema": "compiled using Node SQLite, not the Python runtime",
+    "sqlite_statements_compiled": 43,
+    "sqlite_errors": [],
+    "public_files_scanned": 36,
+    "privacy_pattern_findings": []
+  },
+  "not_verified": [
+    "Python syntax compilation",
+    "pytest collection and execution",
+    "real Git subprocess behavior",
+    "Windows file-lock cleanup",
+    "Linux execution",
+    "live Feishu bots and callbacks",
+    "A2A conformance",
+    "malicious-code sandbox isolation"
+  ],
+  "file_sha256": {
+    "src/a2a_slice_hub/api.py": "1626c4efc6d5c3f4d733134d162791a64d1fb75815fcef61176622a84840b7c5",
+    "src/a2a_slice_hub/approvals.py": "32552e5209f1741bd788a869fad3e1d9dbf67a822303b07f087ac9d6f0ea51bc",
+    "src/a2a_slice_hub/config.py": "df50e2a032fbf586e3cc277ca840436ee4858215914ff8ac7ada4b6176ca5b7a",
+    "src/a2a_slice_hub/errors.py": "e40210daedb9d925815ea67746f0c21e0cc0b551121237840c4b9cb71968dc3f",
+    "src/a2a_slice_hub/experience.py": "02d91f9b08d355b86f8222e2ef60b8a6f03741d7b2e7f66c9166af230c3b956f",
+    "src/a2a_slice_hub/gatekeeper.py": "d07648378df4de5a0c22d4ec8af3210093bcf417db870dbb92bd353af7b4c5c2",
+    "src/a2a_slice_hub/git.py": "4523f48d120375c09f86835786427188610a5c02d1913c0b41e9fd7155601b74",
+    "src/a2a_slice_hub/im.py": "cd5d27c86a11ca0d39cfed4f13b25fb7b24b3ef036defdaa62d8adad405e0710",
+    "src/a2a_slice_hub/models.py": "5bb818f0f643e697332fa0ca6c04613b0169c4b13646aa2bdd8c6d7fc1de12f3",
+    "src/a2a_slice_hub/paths.py": "1c6b8d5ede270d453afc3cdcf4624130815069e892f3c7e18d14524592c1d443",
+    "src/a2a_slice_hub/review.py": "c3a124827572cbeae481828f24d02c1f84eaeb127967806ed6d7a5ef2cb69e55",
+    "src/a2a_slice_hub/runner.py": "e6ebb59e896b46bd108c5528749e1cbd01d00244d4ef6db0ff44b7c4ead501aa",
+    "src/a2a_slice_hub/store.py": "0dbfaaee05a45cf650af6147d023d3ee17952360070a3577c3cd31098be7d48a",
+    "src/a2a_slice_hub/worker.py": "e0412f5c5d5f672debc0320614f96e43cd753db6b70bf0bd5a7c4fcbdb379cd3",
+    "src/a2a_slice_hub/__init__.py": "5ceacb03baf1a38db3c9b6f7ce078a5a9480726d32cb2feaade1e28a45e15c5b",
+    "src/a2a_slice_hub/__main__.py": "6c9b695308922e50c23eb9c0a8384720c0a92c7fed3a30c19505e3c59ea27027",
+    "tests/conftest.py": "734757c985cc1eefd028e7fbaf1dcc8733afd091db9c6eb5a7fa54074e825973",
+    "tests/test_api_im.py": "b9e497dfb51fa161c1d4ced36c7ab553a67cd64611e800afc53deda0ca797e76",
+    "tests/test_gatekeeper.py": "ab763cdf81c096a41b58691c9e52dbc0fd3c7af8199c6ae6c47e8cdc9cb2a0d8",
+    "tests/test_publication_hygiene.py": "bf5b8098c563d9986c5db1b32b03d72e0088e002cee85e7015080a5225458a19",
+    "tests/test_qa.py": "8a44df7e51b207cc35330d2ac7067e98f1813e447dc3f7a6d7e725e8db1ed37a",
+    "tests/test_review.py": "2c5f474acff8851209e15b03bf06f8687ecf564cada90323c683d8385c627f54",
+    "tests/test_store.py": "21e5c599a1c366b38381cf596b02d26b889a5f39701f0ea2c9d89a9b62d21d37",
+    "tests/test_worker.py": "ac14f3760b69ceeb99d6ac268232294438bbc0ba5a549ed560d2a68ae3ad2d90"
+  }
+}
