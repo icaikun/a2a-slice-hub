@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "order_id": {
+      "type": "string"
+    },
+    "subtotal_cents": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "order_id",
+    "subtotal_cents"
+  ]
+}

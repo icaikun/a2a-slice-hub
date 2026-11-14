@@ -1,0 +1,8 @@
+slice_id: billing
+owner_user_id: bob
+owned_paths:
+  - src/billing
+consumes_contracts:
+  - order_summary
+required_skills:
+  - integer-money

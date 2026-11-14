@@ -1,0 +1,8 @@
+slice_id: orders
+owner_user_id: alice
+owned_paths:
+  - src/orders
+provides_contracts:
+  - order_summary
+required_skills:
+  - integer-money

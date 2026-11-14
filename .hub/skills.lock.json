@@ -1,0 +1,11 @@
+{
+  "skills": [
+    {
+      "name": "integer-money",
+      "claude_mirror": true,
+      "files": {
+        "SKILL.md": "e65e02e6a1fa8778747d2d68ae51d10345d5757c39f1a1f7b39cb621fff9574f"
+      }
+    }
+  ]
+}

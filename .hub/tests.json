@@ -1,0 +1,14 @@
+{
+  "accepted": [
+    "tests/test_smoke.py::test_contracts_present"
+  ],
+  "required": {
+    "orders": [
+      "tests/test_orders_gate.py::test_compute_order_subtotal"
+    ],
+    "billing": [
+      "tests/test_billing_gate.py::test_build_invoice_standard"
+    ]
+  },
+  "pending": []
+}
