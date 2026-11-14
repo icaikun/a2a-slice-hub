@@ -205,3 +205,24 @@ def test_real_process_death_between_git_and_sqlite_is_recoverable(store, repo):
     assert repo.git.ref("epic/demo") == candidate
     assert store.get_item(item["id"])["state"] == "GATING"
     assert gate(store, repo).recover() == {key: "COMMITTED"}
+
+
+def test_gatekeeper_propagates_slice_scoped_adrs_and_contracts_to_gates(store, repo):
+    baseline = repo.source({
+        "docs/adr/0001.md": "---\nid: '0001'\nstatus: accepted\nscope:\n  slices: [orders]\n---\n# ADR 0001\n\n## Decision\nKeep integers.\n",
+        "tests/test_acceptance.py": (
+            "import json\nfrom orders.service import total\n\n"
+            "def test_total():\n"
+            "    assert json.loads(open('contracts/orders.json', encoding='utf-8').read())['required'] == ['id']\n"
+            "    assert total() >= 1\n"
+        ),
+    })
+    repo.git.run("update-ref", "refs/heads/epic/demo", baseline)
+    repo.base = baseline
+    item = new_item(store)
+    source = repo.source({"src/orders/service.py": "def total():\n    return 5\n"})
+    attempt = submit(store, item, repo, source)
+    reviewer = Approve()
+    result = gate(store, repo, reviewer).merge("epic/demo", [attempt["id"]])
+    assert [a["id"] for a in reviewer.contexts[0].active_adrs] == ["0001"]
+    assert result["tests"]["passed"] == ["tests/test_acceptance.py::test_total"]

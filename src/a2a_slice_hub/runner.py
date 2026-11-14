@@ -90,6 +90,13 @@ class TrustedPytestRunner:
                         target = trusted / name
                         target.parent.mkdir(parents=True, exist_ok=True)
                         target.write_bytes(git.blob(base, name))
+                for name, (mode, _, _) in git.tree(candidate).items():
+                    if name.startswith("contracts/") and not protected(name):
+                        if mode not in {"100644", "100755"}:
+                            raise GateRejected("non-regular contract file")
+                        target = trusted / name
+                        target.parent.mkdir(parents=True, exist_ok=True)
+                        target.write_bytes(git.blob(candidate, name))
                 config = trusted / "pytest.ini"
                 if not config.exists():
                     # Never inherit candidate configuration through discovery.

@@ -144,7 +144,7 @@ class Gatekeeper:
             if grant:
                 approval_grants.append(grant)
         evidence = self.runner.run(self.git, base, candidate, slices | regression)
-        verdict = self.reviewer.review(context_for(self.git, base, candidate))
+        verdict = self.reviewer.review(context_for(self.git, base, candidate, slices=slices))
         if not verdict.approved:
             raise GateRejected("semantic review rejected: " + verdict.reason)
         intent = self.store.prepare_merge(branch, base, candidate, items,

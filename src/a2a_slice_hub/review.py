@@ -232,7 +232,7 @@ class RejectUnconfiguredReviewer:
         raise InfrastructureError("semantic reviewer is not configured")
 
 
-def context_for(git, base, candidate, limit=80):
+def context_for(git, base, candidate, limit=80, *, slices=()):
     changed = sorted({p for _, paths in git.changes(base, candidate) for p in paths})
     old_tree, new_tree = git.tree(base), git.tree(candidate)
     symbols, callers, incomplete = set(), [], False
@@ -284,7 +284,7 @@ def context_for(git, base, candidate, limit=80):
     diff = patch[:256_000].decode("utf-8", errors="replace")
     # Python AST is a heuristic, not a whole-program call graph (reflection/dispatch are unknown).
     from .context import load_adrs
-    adrs = load_adrs(git, base, paths=changed)
+    adrs = load_adrs(git, base, slices=slices, paths=changed)
     return ReviewContext(base, candidate, tuple(changed), tuple(sorted(symbols)), diff, tuple(callers), incomplete, adrs)
 
 

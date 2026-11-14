@@ -70,7 +70,7 @@ def _effective(git, rev, value):
         raise GateRejected("invalid ADR effective_from") from exc
 
 
-def load_adrs(git, rev, *, slice_id=None, paths=(), all_scopes=False):
+def load_adrs(git, rev, *, slice_id=None, slices=(), paths=(), all_scopes=False):
     """The caller must supply its trusted base SHA, not a candidate revision."""
     tree = git.tree(rev)
     records = []
@@ -124,12 +124,13 @@ def load_adrs(git, rev, *, slice_id=None, paths=(), all_scopes=False):
             raise GateRejected("malformed ADR frontmatter") from exc
     accepted = [r for r in records if r["status"] == "accepted" and r.pop("effective")]
     superseded = {value for r in accepted for value in r["supersedes"]}
+    wanted_slices = ({slice_id} if slice_id is not None else set()) | set(slices)
     result = []
     for record in accepted:
         if record["id"] in superseded:
             continue
         scope = record["scope"]
-        if (all_scopes or not scope["slices"] and not scope["paths"] or slice_id in scope["slices"]
+        if (all_scopes or not scope["slices"] and not scope["paths"] or bool(wanted_slices & set(scope["slices"]))
                 or any(inside(p, prefix) or inside(prefix, p) for p in paths for prefix in scope["paths"])):
             # Ensure arbitrary YAML values cannot poison a task's JSON serialization.
             try:
