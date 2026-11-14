@@ -3,9 +3,9 @@ from contextlib import contextmanager
 import os
 from pathlib import Path
 import re
+import secrets
 import shutil
 import subprocess
-import tempfile
 import time
 
 from .errors import GateRejected, InfrastructureError
@@ -32,7 +32,8 @@ class Git:
         env.update(extra_env or {})
         command = ["git", "-c", "core.hooksPath=" + os.devnull, "-c", "core.autocrlf=false",
                    "-c", "commit.gpgSign=false", "-c", "core.attributesFile=" + os.devnull,
-                   "-c", "protocol.file.allow=never", "-c", "submodule.recurse=false", *args]
+                   "-c", "protocol.file.allow=never", "-c", "submodule.recurse=false",
+                   "-c", "core.longpaths=true", *args]
         try:
             result = subprocess.run(command, cwd=cwd or self.repository, env=env, input=data,
                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout, check=False)
@@ -100,7 +101,16 @@ class Git:
     @contextmanager
     def worktree(self, sha):
         self.commit(sha)
-        directory = Path(tempfile.mkdtemp(prefix="tree-", dir=self.scratch))
+        # Preserve scratch ACLs instead of tempfile.mkdtemp(0o700), which strips inherited Windows DACLs.
+        for _ in range(16):
+            directory = self.scratch / ("tree-" + secrets.token_hex(4))
+            try:
+                directory.mkdir(parents=False, exist_ok=False)
+                break
+            except FileExistsError:
+                continue
+        else:
+            raise InfrastructureError("cannot allocate worktree scratch directory")
         added = False
         try:
             self.run("worktree", "add", "--detach", str(directory), sha)

@@ -233,9 +233,12 @@ if mode == "malformed":
     print("not json")
 elif "exec" in args:
     pathlib.Path(args[args.index("-o") + 1]).write_text(json.dumps(result), encoding="utf-8")
-    print(json.dumps({"type": "turn.completed"}))
+    print(json.dumps({"type": "turn.completed"}), flush=True)
 else:
-    print(json.dumps(result if mode == "direct" else {"structured_output": result}))
+    print(json.dumps(result if mode == "direct" else {"structured_output": result}), flush=True)
+if mode == "orphan-pipe":
+    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+    pathlib.Path(os.environ["MOCK_PID_FILE"]).write_text(str(child.pid))
 '''
 
 
@@ -528,3 +531,69 @@ def test_dual_cli_cancellation_while_stdin_is_blocked(cli, repo, external_scratc
             ctx.cancel_event.set()
             thread.join(8)
         assert not thread.is_alive() and errors
+
+
+def test_coding_result_schema_strict_nested_objects():
+    from a2a_slice_hub.coding.base import CODING_RESULT_SCHEMA
+
+    def walk(node):
+        if isinstance(node, dict):
+            if node.get("type") == "object" or "properties" in node:
+                assert node.get("additionalProperties") is False
+                assert isinstance(node.get("properties"), dict)
+                assert set(node.get("required", [])) == set(node["properties"])
+            for value in node.values():
+                walk(value)
+        elif isinstance(node, list):
+            for item in node:
+                walk(item)
+
+    walk(CODING_RESULT_SCHEMA)
+
+
+def test_dual_cli_reaps_orphan_pipe_holder_on_clean_exit(cli, repo, external_scratch):
+    pid_file = external_scratch / "orphan-grandchild.pid"
+    with repo.git.worktree(repo.base) as directory:
+        ctx = execution(repo, directory, external_scratch)
+        started = time.monotonic()
+        result = cli("orphan-pipe", timeout_seconds=10, env={"MOCK_PID_FILE": str(pid_file)})(directory, ctx)
+        elapsed = time.monotonic() - started
+        assert result.state == "completed"
+        assert elapsed < 6.0
+        assert pid_file.is_file()
+        assert not alive(int(pid_file.read_text()))
+
+
+def test_windows_cmd_shim_resolution_uses_scrubbed_path(tmp_path, monkeypatch, repo, external_scratch):
+    import subprocess
+    script = external_scratch / "shim_mock_cli.py"
+    script.write_text(MOCK_CLI, encoding="utf-8")
+    bin_dir = tmp_path / "bin"
+    cwd_dir = tmp_path / "decoy_cwd"
+    bin_dir.mkdir()
+    cwd_dir.mkdir()
+    target_name = "fakecli.CMD" if os.name == "nt" else "fakecli"
+    for parent in (bin_dir, cwd_dir):
+        shim = parent / target_name
+        shim.write_text("@echo off\r\n" if os.name == "nt" else "#!/bin/sh\nexit 0\n", encoding="utf-8")
+        if os.name != "nt":
+            shim.chmod(0o755)
+    monkeypatch.chdir(cwd_dir)
+    real_popen = subprocess.Popen
+    spawned = []
+
+    def tracking_popen(args, **kwargs):
+        if isinstance(args, (list, tuple)) and args and "fakecli" in Path(str(args[0])).name.lower():
+            spawned.append(Path(args[0]).resolve())
+            return real_popen([sys.executable, *args[1:]], **kwargs)
+        return real_popen(args, **kwargs)
+
+    monkeypatch.setattr(subprocess, "Popen", tracking_popen)
+    adapter = CodexCliAdapter(executable="fakecli", extra_args=[str(script)],
+                              env={"PATH": str(bin_dir), "PATHEXT": ".CMD;.EXE"})
+    assert adapter.argv(tmp_path, external_scratch)[0] == "fakecli"
+    with repo.git.worktree(repo.base) as directory:
+        result = adapter(directory, execution(repo, directory, external_scratch))
+    assert result.state == "completed"
+    assert spawned == [(bin_dir / target_name).resolve()]
+    assert spawned[0] != (cwd_dir / target_name).resolve()

@@ -4,6 +4,7 @@ import json
 import math
 import os
 from pathlib import Path
+import shutil
 import signal
 import stat
 import subprocess
@@ -22,7 +23,27 @@ CODING_RESULT_SCHEMA = {
         "state": {"type": "string", "enum": ["completed", "input-required", "failed"]},
         "summary": {"type": "string"},
         "commit_message": {"type": ["string", "null"]},
-        "dependency_request": {"type": ["object", "null"]},
+        "dependency_request": {
+            "anyOf": [
+                {
+                    "type": "object", "additionalProperties": False,
+                    "properties": {
+                        "schema_version": {"type": "string", "enum": ["dependency-request/v1"]},
+                        "contract": {"type": "string"},
+                        "expected_change": {
+                            "type": "object", "additionalProperties": False,
+                            "properties": {
+                                "summary": {"type": "string"},
+                                "fields": {"type": "array", "items": {"type": "string"}},
+                            },
+                            "required": ["summary", "fields"],
+                        },
+                    },
+                    "required": ["schema_version", "contract", "expected_change"],
+                },
+                {"type": "null"},
+            ],
+        },
         "clarification_question": {"type": ["string", "null"]},
     },
     "required": ["state", "summary", "commit_message", "dependency_request", "clarification_question"],
@@ -161,8 +182,22 @@ class CLICodingAdapter:
         if cancel.is_set():
             raise GateRejected("CLI execution cancelled")
         options = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == "nt" else {"start_new_session": True}
+        env = self.environment()
+        spawn_argv = list(argv)
+        if (self.process_spawner is subprocess.Popen and spawn_argv
+                and os.sep not in spawn_argv[0]
+                and (os.altsep is None or os.altsep not in spawn_argv[0])):
+            # Windows CreateProcessW skips PATHEXT shims (.CMD/.BAT); search scrubbed PATH explicitly without cwd.
+            search_path = env.get("PATH") or env.get("Path") or ""
+            for entry in search_path.split(os.pathsep):
+                entry = entry.strip('"')
+                if entry and Path(entry).is_absolute():
+                    found = shutil.which(os.path.join(entry, spawn_argv[0]))
+                    if found:
+                        spawn_argv[0] = found
+                        break
         try:
-            process = self.process_spawner(argv, cwd=directory, env=self.environment(),
+            process = self.process_spawner(spawn_argv, cwd=directory, env=env,
                                            stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                            stderr=subprocess.PIPE, **options)
         except OSError as exc:
@@ -204,6 +239,14 @@ class CLICodingAdapter:
                     break
                 except subprocess.TimeoutExpired:
                     data = None
+                    if process.poll() is not None:
+                        # Orphaned descendants can keep inherited pipes open after the CLI exits.
+                        try:
+                            stdout, stderr = process.communicate(timeout=0.05)
+                        except subprocess.TimeoutExpired:
+                            terminate()
+                            stdout, stderr = process.communicate(timeout=1)
+                        break
             if cancel.is_set():
                 raise GateRejected("CLI execution cancelled")
             if time.monotonic() - started >= self.timeout_seconds:

@@ -2,9 +2,11 @@
 import json
 import os
 from pathlib import Path
+import secrets
+import shutil
 import subprocess
 import sys
-import tempfile
+import time
 
 from .errors import GateRejected, InfrastructureError
 from .paths import protected, safe_path
@@ -70,34 +72,52 @@ class TrustedPytestRunner:
         except (KeyError, TypeError, ValueError) as exc:
             raise GateRejected("invalid trusted test manifest") from exc
         tree = git.tree(base)
-        with git.worktree(candidate) as work, tempfile.TemporaryDirectory(prefix="suite-", dir=git.scratch) as directory:
-            trusted = Path(directory)
-            for name, (mode, _, _) in tree.items():
-                if protected(name) or name.startswith("tests/"):
-                    if mode not in {"100644", "100755"}:
-                        raise GateRejected("non-regular trusted baseline file")
-                    target = trusted / name
-                    target.parent.mkdir(parents=True, exist_ok=True)
-                    target.write_bytes(git.blob(base, name))
-            config = trusted / "pytest.ini"
-            if not config.exists():
-                # Never inherit candidate configuration through discovery.
-                config.write_text("[pytest]\n", encoding="utf-8", newline="\n")
-            output = trusted / "evidence.json"
-            env = {k: v for k, v in os.environ.items()
-                   if not k.startswith(("PYTHON", "PYTEST", "GIT_")) and k in {
-                       "PATH", "SystemRoot", "SYSTEMROOT", "WINDIR", "TEMP", "TMP", "HOME", "USERPROFILE", "LANG"
-                   }}
-            env["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "1"
+        for _ in range(16):
+            trusted = git.scratch / ("suite-" + secrets.token_hex(4))
             try:
-                result = subprocess.run([sys.executable, "-I", "-c", DRIVER, str(trusted), str(work),
-                    str(output), json.dumps(sorted(selected))], cwd=trusted, env=env,
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=self.timeout, check=False)
-                evidence = json.loads(output.read_text(encoding="utf-8"))
-            except (OSError, subprocess.TimeoutExpired, ValueError) as exc:
-                raise InfrastructureError("test runner failed or timed out") from exc
-            if (result.returncode != 0 or set(evidence.get("collected", [])) != selected
-                    or set(evidence.get("passed", [])) != selected or evidence.get("skipped")
-                    or evidence.get("failed") or len(evidence["collected"]) != len(selected)):
-                raise GateRejected("trusted tests failed, skipped, xfailed, or collected unexpected IDs")
-            return evidence
+                trusted.mkdir(parents=False, exist_ok=False)
+                break
+            except FileExistsError:
+                continue
+        else:
+            raise InfrastructureError("cannot allocate test runner directory")
+        try:
+            with git.worktree(candidate) as work:
+                for name, (mode, _, _) in tree.items():
+                    if protected(name) or name.startswith("tests/"):
+                        if mode not in {"100644", "100755"}:
+                            raise GateRejected("non-regular trusted baseline file")
+                        target = trusted / name
+                        target.parent.mkdir(parents=True, exist_ok=True)
+                        target.write_bytes(git.blob(base, name))
+                config = trusted / "pytest.ini"
+                if not config.exists():
+                    # Never inherit candidate configuration through discovery.
+                    config.write_text("[pytest]\n", encoding="utf-8", newline="\n")
+                output = trusted / "evidence.json"
+                allowed_env = {"PATH", "SYSTEMROOT", "WINDIR", "TEMP", "TMP", "HOME", "USERPROFILE", "LANG"}
+                env = {k: v for k, v in os.environ.items()
+                       if not k.upper().startswith(("PYTHON", "PYTEST", "GIT_")) and k.upper() in allowed_env}
+                env["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "1"
+                try:
+                    result = subprocess.run([sys.executable, "-I", "-c", DRIVER, str(trusted), str(work),
+                        str(output), json.dumps(sorted(selected))], cwd=trusted, env=env,
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=self.timeout, check=False)
+                    evidence = json.loads(output.read_text(encoding="utf-8"))
+                except (OSError, subprocess.TimeoutExpired, ValueError) as exc:
+                    raise InfrastructureError("test runner failed or timed out") from exc
+                if (result.returncode != 0 or set(evidence.get("collected", [])) != selected
+                        or set(evidence.get("passed", [])) != selected or evidence.get("skipped")
+                        or evidence.get("failed") or len(evidence["collected"]) != len(selected)):
+                    raise GateRejected("trusted tests failed, skipped, xfailed, or collected unexpected IDs")
+                return evidence
+        finally:
+            for attempt in range(6):
+                try:
+                    if trusted.exists():
+                        shutil.rmtree(trusted)
+                    break
+                except PermissionError:
+                    if attempt == 5:
+                        raise
+                    time.sleep(0.05 * (attempt + 1))
